@@ -1,0 +1,17 @@
+{
+  "features": [
+    {"name": "age", "type": "numeric", "min": 0, "max": 120},
+    {"name": "gender", "type": "categorical", "values": ["Male", "Female", "Other"]},
+    {"name": "disease", "type": "categorical", "values": ["Fever", "Cold", "Diabetes", "BP", "Migraine", "Pregnancy", "Emergency", "General Checkup", "Follow-up", "Cardiology", "Neurology", "Orthopedic", "Skin", "ENT", "Eye", "Dental", "Physiotherapy"]},
+    {"name": "doctor", "type": "categorical", "values": ["Dr. Arun", "Dr. Ravi", "Dr. Priya", "Dr. Sharma", "Dr. Gupta", "Dr. Singh", "Dr. Reddy", "Dr. Kumar"]},
+    {"name": "dayOfWeek", "type": "categorical", "values": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]},
+    {"name": "timeSlot", "type": "categorical", "values": ["Morning", "Afternoon", "Evening", "Night"]},
+    {"name": "queueLength", "type": "numeric", "min": 0, "max": 100}
+  ],
+  "target": {
+    "name": "actualDuration",
+    "type": "numeric",
+    "min": 1,
+    "max": 120
+  }
+}
