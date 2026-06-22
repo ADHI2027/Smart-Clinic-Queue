@@ -19,7 +19,7 @@ public interface PatientRepository extends MongoRepository<Patient, String> {
      * Find all patients with a specific status, ordered by creation time
      */
     List<Patient> findByStatusOrderByCreatedAtAsc(PatientStatus status);
-    
+    List<Patient> findByIsEmergencyTrue();
     /**
      * Find all patients with status in a list, ordered by creation time
      */

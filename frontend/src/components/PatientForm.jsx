@@ -9,11 +9,22 @@ const PatientForm = ({ onPatientAdded, onSearchPatient }) => {
     name: '',
     phone: '',
     disease: '',
-    consultationDuration: 10
+    symptoms: ''
   });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [searchPhone, setSearchPhone] = useState('');
+
+  // Emergency symptoms list
+  const emergencySymptoms = [
+    'chest pain',
+    'breathing difficulty',
+    'heavy bleeding',
+    'stroke',
+    'severe burns',
+    'seizures',
+    'high fever'
+  ];
 
   const validateForm = () => {
     const newErrors = {};
@@ -34,12 +45,6 @@ const PatientForm = ({ onPatientAdded, onSearchPatient }) => {
       newErrors.disease = 'Disease/Reason is required';
     }
     
-    if (!formData.consultationDuration) {
-      newErrors.consultationDuration = 'Consultation duration is required';
-    } else if (formData.consultationDuration < 1 || formData.consultationDuration > 60) {
-      newErrors.consultationDuration = 'Duration must be between 1-60 minutes';
-    }
-    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -50,7 +55,6 @@ const PatientForm = ({ onPatientAdded, onSearchPatient }) => {
       ...prev,
       [name]: value
     }));
-    // Clear error for this field
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -67,10 +71,41 @@ const PatientForm = ({ onPatientAdded, onSearchPatient }) => {
       return;
     }
 
+    // Check for emergency symptoms
+    const symptoms = formData.symptoms?.toLowerCase() || '';
+    const isEmergency = emergencySymptoms.some(s => symptoms.includes(s));
+
+    let priorityApproved = false;
+    if (isEmergency) {
+      priorityApproved = window.confirm(
+        '🚨 Emergency symptoms detected!\n\n' +
+        'Patient: ' + formData.name + '\n' +
+        'Symptoms: ' + formData.symptoms + '\n\n' +
+        'Do you want to approve emergency priority?'
+      );
+      
+      if (priorityApproved) {
+        toast.success('🚨 Emergency priority approved! Patient will be moved to front of queue.');
+      } else {
+        toast.info('Patient added to normal queue');
+      }
+    }
+
     setSubmitting(true);
+    
     try {
-      await patientApi.addPatient(formData);
-      toast.success('Patient registered successfully!');
+      await patientApi.addPatient({
+        ...formData,
+        isEmergency: isEmergency,
+        priorityApproved: priorityApproved,
+        emergencyReason: isEmergency ? formData.disease : null
+      });
+      
+      toast.success(isEmergency && priorityApproved ? 
+        '🚨 Emergency patient added with priority!' : 
+        'Patient registered successfully!'
+      );
+      
       handleClear();
       if (onPatientAdded) {
         onPatientAdded();
@@ -88,7 +123,7 @@ const PatientForm = ({ onPatientAdded, onSearchPatient }) => {
       name: '',
       phone: '',
       disease: '',
-      consultationDuration: 10
+      symptoms: ''
     });
     setErrors({});
   };
@@ -160,23 +195,23 @@ const PatientForm = ({ onPatientAdded, onSearchPatient }) => {
           {errors.disease && <span className="error-message">{errors.disease}</span>}
         </div>
 
-        {/*<div className="form-group">
-          <label htmlFor="consultationDuration">Consultation Duration (minutes) *</label>
-          <input
-            type="number"
-            id="consultationDuration"
-            name="consultationDuration"
-            value={formData.consultationDuration}
+        <div className="form-group">
+          <label htmlFor="symptoms">Symptoms</label>
+          <textarea
+            id="symptoms"
+            name="symptoms"
+            value={formData.symptoms}
             onChange={handleChange}
-            min="1"
-            max="60"
-            className={errors.consultationDuration ? 'error' : ''}
+            placeholder="Describe symptoms (e.g., chest pain, breathing difficulty, heavy bleeding)"
+            rows="2"
+            className={errors.symptoms ? 'error' : ''}
             disabled={submitting}
           />
-          {errors.consultationDuration && (
-            <span className="error-message">{errors.consultationDuration}</span>
-          )}
-        </div>*/}
+          <small className="helper-text">
+            ⚠️ Emergency symptoms: chest pain, breathing difficulty, heavy bleeding, stroke, severe burns, seizures, high fever
+          </small>
+          {errors.symptoms && <span className="error-message">{errors.symptoms}</span>}
+        </div>
 
         <div className="form-actions">
           <button 

@@ -1,0 +1,221 @@
+/* Self Registration Container */
+.self-registration-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 40px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.self-registration-box {
+  background: white;
+  max-width: 500px;
+  width: 100%;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.self-registration-box h1 {
+  text-align: center;
+  color: #2c3e50;
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #7f8c8d;
+  margin-bottom: 30px;
+  font-size: 0.95rem;
+}
+
+.self-registration-form .form-group {
+  margin-bottom: 18px;
+}
+
+.self-registration-form label {
+  display: block;
+  font-weight: 600;
+  color: #34495e;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+.self-registration-form input,
+.self-registration-form select,
+.self-registration-form textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.self-registration-form input:focus,
+.self-registration-form select:focus,
+.self-registration-form textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+.self-registration-form textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.book-appointment-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.book-appointment-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.book-appointment-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Confirmation Screen */
+.confirmation-box {
+  background: white;
+  max-width: 500px;
+  width: 100%;
+  padding: 50px 40px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+.success-icon {
+  font-size: 4rem;
+  margin-bottom: 10px;
+}
+
+.confirmation-box h1 {
+  color: #2c3e50;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+.token-display {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+}
+
+.token-label {
+  display: block;
+  color: #7f8c8d;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.token-number {
+  display: block;
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.eta-display {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.eta-item {
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.eta-label {
+  display: block;
+  font-size: 0.7rem;
+  color: #95a5a6;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.eta-value {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-top: 3px;
+}
+
+.track-queue-btn {
+  width: 100%;
+  padding: 14px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.track-queue-btn:hover {
+  background: #219a52;
+  transform: translateY(-2px);
+}
+
+.register-again-btn {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  color: #7f8c8d;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.register-again-btn:hover {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .self-registration-box {
+    padding: 25px 20px;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  .eta-display {
+    grid-template-columns: 1fr;
+  }
+}

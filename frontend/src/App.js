@@ -6,6 +6,7 @@ import './App.css';
 import ReceptionistDashboard from './components/ReceptionistDashboard';
 import TVDisplay from './components/TVDisplay';
 import Login from './components/Login';
+import SelfRegistration from './components/SelfRegistration';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/receptionist" element={<ReceptionistDashboard />} />
           <Route path="/tv" element={<TVDisplay />} />
+          <Route path="/self-register" element={<SelfRegistration />} />
           <Route path="/" element={<Navigate to="/login" />} />
         </Routes>
         <ToastContainer 

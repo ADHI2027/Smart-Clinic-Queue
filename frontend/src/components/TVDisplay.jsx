@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CurrentPatientCard from './CurrentPatientCard';
 import UpcomingTokens from './UpcomingTokens';
+import QRCode from 'qrcode.react';
 import webSocketService from '../services/websocket';
 import { patientApi } from '../services/api';
 import '../styles/tvdisplay.css';
@@ -12,6 +13,10 @@ const TVDisplay = () => {
     totalWaiting: 0
   });
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Get base URL from environment
+  const baseUrl = process.env.REACT_APP_BASE_URL || window.location.origin;
+  const qrValue = `${baseUrl}/self-register`;
 
   const fetchQueueData = async () => {
     try {
@@ -25,12 +30,10 @@ const TVDisplay = () => {
   useEffect(() => {
     fetchQueueData();
 
-    // Connect to WebSocket for real-time updates
     webSocketService.connect((updatedQueue) => {
       setQueueData(updatedQueue);
     });
 
-    // Cleanup
     return () => {
       webSocketService.disconnect();
     };
@@ -70,7 +73,11 @@ const TVDisplay = () => {
 
       <div className="tv-content">
         <header className="tv-header">
-          <h1>Queue Solved</h1>
+          <h1>QUEUE SOLVED</h1>
+          <div className="qr-section">
+            <QRCode value={qrValue} size={120} />
+            <p className="qr-label">📱 Scan to Self Register</p>
+          </div>
           <div className="tv-clock">
             {new Date().toLocaleTimeString('en-US', { 
               hour: '2-digit', 
@@ -107,4 +114,5 @@ const TVDisplay = () => {
     </div>
   );
 };
+
 export default TVDisplay;

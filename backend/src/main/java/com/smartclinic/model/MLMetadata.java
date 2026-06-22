@@ -28,5 +28,4 @@ public class MLMetadata {
     private Map<String, Double> featureWeights;
     private Double baselinePrediction;
     private Double learningRate;
-    private Map<String, Double> featureImportance;
 }

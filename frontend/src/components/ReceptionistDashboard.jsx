@@ -1,3 +1,4 @@
+import VoiceAnnouncement from './VoiceAnnouncement';
 import { FaSignOutAlt, FaTv } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
@@ -8,6 +9,40 @@ import { patientApi } from '../services/api';
 import webSocketService from '../services/websocket';
 import { toast } from 'react-toastify';
 import '../styles/dashboard.css';
+const handleCallNext = async () => {
+  try {
+    const response = await patientApi.callNext();
+    await fetchQueue();
+    toast.success('Called next patient');
+    
+    // Voice announcement
+    if (response.data) {
+      const patient = response.data;
+      const isEmergency = patient.emergency || false;
+      const message = isEmergency 
+        ? `Emergency patient ${patient.token}, please proceed immediately.`
+        : `Token Number ${patient.token}, ${patient.name}, please proceed to the consultation room.`;
+      
+      // Speak the message
+      if (window.speechSynthesis) {
+        const utterance = new SpeechSynthesisUtterance(message);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+        utterance.pitch = 1.1;
+        utterance.volume = 1;
+        window.speechSynthesis.speak(utterance);
+        
+        // Repeat after 2 seconds
+        setTimeout(() => {
+          window.speechSynthesis.speak(utterance);
+        }, 2000);
+      }
+    }
+  } catch (error) {
+    console.error('Error calling next:', error);
+    toast.error('Failed to call next patient');
+  }
+};
 
 const ReceptionistDashboard = () => {
   const [queueData, setQueueData] = useState({
@@ -61,15 +96,51 @@ const ReceptionistDashboard = () => {
   };
 
   const handleCallNext = async () => {
-    try {
-      await patientApi.callNext();
-      await fetchQueue();
-      toast.success('Called next patient');
-    } catch (error) {
-      console.error('Error calling next:', error);
-      toast.error('Failed to call next patient');
+  try {
+    const response = await patientApi.callNext();
+    await fetchQueue();
+    toast.success('Called next patient');
+    
+    // Voice announcement
+    if (response && response.data) {
+      const patient = response.data;
+      const isEmergency = patient.emergency || patient.isEmergency || false;
+      
+      // Create announcement message
+      let message;
+      if (isEmergency) {
+        message = `Emergency patient ${patient.token}, please proceed immediately.`;
+      } else {
+        message = `Token Number ${patient.token}, ${patient.name}, please proceed to the consultation room.`;
+      }
+      
+      // Speak the message using Web Speech API
+      if (window.speechSynthesis) {
+        // Cancel any ongoing speech
+        window.speechSynthesis.cancel();
+        
+        const utterance = new SpeechSynthesisUtterance(message);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+        utterance.pitch = 1.1;
+        utterance.volume = 1;
+        
+        // Speak twice
+        window.speechSynthesis.speak(utterance);
+        setTimeout(() => {
+          window.speechSynthesis.speak(utterance);
+        }, 2000);
+        
+        console.log('🔊 Announcement:', message);
+      } else {
+        console.warn('Speech synthesis not supported in this browser');
+      }
     }
-  };
+  } catch (error) {
+    console.error('Error calling next:', error);
+    toast.error('Failed to call next patient');
+  }
+};
 
   const handleSkipPatient = async (id) => {
     try {
@@ -123,6 +194,7 @@ const ReceptionistDashboard = () => {
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
+        <VoiceAnnouncement />
         <h1>Receptionist Dashboard</h1>
         <div className="header-actions">
           <button className="btn-tv" onClick={() => window.open('/tv', '_blank')}>

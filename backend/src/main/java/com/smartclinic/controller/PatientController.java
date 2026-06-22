@@ -1,5 +1,6 @@
 package com.smartclinic.controller;
-
+import java.util.Map;
+import java.util.HashMap;
 import com.smartclinic.dto.PatientRequest;
 import com.smartclinic.dto.PatientResponse;
 import com.smartclinic.dto.QueueResponse;
@@ -18,6 +19,14 @@ import java.util.List;
 @CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
 public class PatientController {
     private final PatientService patientService;
+	@GetMapping("/emergency-check")
+public ResponseEntity<Map<String, Object>> checkEmergency(@RequestParam String symptoms) {
+    boolean isEmergency = patientService.isEmergencyCase(symptoms);
+    Map<String, Object> response = new HashMap<>();
+    response.put("isEmergency", isEmergency);
+    response.put("message", isEmergency ? "🚨 Emergency case detected!" : "Normal case");
+    return ResponseEntity.ok(response);
+}
     
     @PostMapping
     public ResponseEntity<PatientResponse> addPatient(@Valid @RequestBody PatientRequest request) {

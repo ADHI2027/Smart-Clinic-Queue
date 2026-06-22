@@ -3,6 +3,7 @@ import { FaUserMd, FaStethoscope, FaClock, FaHourglassEnd } from 'react-icons/fa
 import '../styles/tvdisplay.css';
 
 const CurrentPatientCard = ({ patient }) => {
+  // Check if patient exists
   if (!patient) {
     return (
       <div className="current-patient-card empty">
@@ -15,12 +16,28 @@ const CurrentPatientCard = ({ patient }) => {
     );
   }
 
-  // Calculate end time
-  const startTime = patient.createdAt ? new Date(patient.createdAt) : new Date();
+  // Calculate end time - with fallback for missing createdAt
   const duration = patient.consultationDuration || 10;
+  let startTime = new Date();
+  
+  if (patient.createdAt) {
+    startTime = new Date(patient.createdAt);
+  } else if (patient.estimatedTime) {
+    try {
+      const estimatedTime = patient.estimatedTime;
+      const [time, period] = estimatedTime.split(' ');
+      const [hours, minutes] = time.split(':');
+      let hour = parseInt(hours);
+      if (period === 'PM' && hour !== 12) hour += 12;
+      if (period === 'AM' && hour === 12) hour = 0;
+      startTime.setHours(hour, parseInt(minutes), 0, 0);
+    } catch (e) {
+      startTime = new Date();
+    }
+  }
+  
   const endTime = new Date(startTime.getTime() + duration * 60000);
 
-  // Format time
   const formatTime = (date) => {
     return date.toLocaleTimeString('en-US', { 
       hour: '2-digit', 
@@ -48,7 +65,7 @@ const CurrentPatientCard = ({ patient }) => {
         
         <div className="info-item">
           <span className="info-label">Consultation Duration</span>
-          <span className="info-value">{patient.consultationDuration} minutes</span>
+          <span className="info-value">{duration} minutes</span>
         </div>
         
         <div className="info-item">
@@ -58,7 +75,6 @@ const CurrentPatientCard = ({ patient }) => {
           <span className="info-value">{formatTime(startTime)}</span>
         </div>
         
-        {/* NEW: Estimated End Time */}
         <div className="info-item highlight">
           <span className="info-label">
             <FaHourglassEnd className="info-icon" /> Estimated End
@@ -66,6 +82,12 @@ const CurrentPatientCard = ({ patient }) => {
           <span className="info-value end-time">{formatTime(endTime)}</span>
         </div>
       </div>
+
+      {patient.isEmergency && (
+        <div className="emergency-badge">
+          🚨 EMERGENCY PRIORITY
+        </div>
+      )}
 
       <div className="status-indicator consulting">
         <span className="pulse-dot"></span>

@@ -1,6 +1,8 @@
 C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\java\com\smartclinic\repository\MLMetadataRepository.java
 C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\java\com\smartclinic\model\DiseaseStat.java
+C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\java\com\smartclinic\dto\SelfRegistrationResponse.java
 C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\java\com\smartclinic\repository\DoctorStatRepository.java
+C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\java\com\smartclinic\dto\SelfRegistrationRequest.java
 C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\java\com\smartclinic\service\QueueWebSocketService.java
 C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\java\com\smartclinic\dto\PatientResponse.java
 C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\java\com\smartclinic\controller\ETAController.java
@@ -12,7 +14,6 @@ C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\j
 C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\java\com\smartclinic\config\SchedulerConfig.java
 C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\java\com\smartclinic\repository\DiseaseStatRepository.java
 C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\java\com\smartclinic\exception\PatientNotFoundException.java
-C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\java\com\smartclinic\config\ModelConfig.java
 C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\java\com\smartclinic\model\ConsultationHistory.java
 C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\java\com\smartclinic\dto\PatientRequest.java
 C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\java\com\smartclinic\service\MLPredictionService.java
@@ -27,3 +28,4 @@ C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\j
 C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\java\com\smartclinic\model\DoctorStat.java
 C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\java\com\smartclinic\service\ETAService.java
 C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\java\com\smartclinic\dto\QueueResponse.java
+C:\Users\shria\OneDrive\Attachments\Desktop\smartclinic-queue\backend\src\main\java\com\smartclinic\controller\SelfRegistrationController.java

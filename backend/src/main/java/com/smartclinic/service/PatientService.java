@@ -2,15 +2,15 @@ package com.smartclinic.service;
 
 import com.smartclinic.model.ConsultationHistory;
 import com.smartclinic.model.DiseaseStat;
+import com.smartclinic.model.Patient;
+import com.smartclinic.model.PatientStatus;
 import com.smartclinic.repository.ConsultationHistoryRepository;
 import com.smartclinic.repository.DiseaseStatRepository;
+import com.smartclinic.repository.PatientRepository;
 import com.smartclinic.dto.PatientRequest;
 import com.smartclinic.dto.PatientResponse;
 import com.smartclinic.dto.QueueResponse;
 import com.smartclinic.exception.PatientNotFoundException;
-import com.smartclinic.model.Patient;
-import com.smartclinic.model.PatientStatus;
-import com.smartclinic.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,32 +36,46 @@ public class PatientService {
         );
     private static final int DEFAULT_DURATION = 10;
 
+    // Emergency symptoms list
+    private static final List<String> EMERGENCY_SYMPTOMS = Arrays.asList(
+        "chest pain",
+        "breathing difficulty",
+        "heavy bleeding",
+        "stroke",
+        "severe burns",
+        "seizures",
+        "high fever"
+    );
+
     // Manual logging
     private void logInfo(String message) {
         System.out.println("[INFO] " + message);
     }
 
-   private void logDebug(String message, Object... args) {
-    String formatted = String.format(message.replace("{}", "%s"), args);
-    System.out.println("[DEBUG] " + formatted);
-}
+    private void logDebug(String message) {
+        System.out.println("[DEBUG] " + message);
+    }
 
-    /**
-     * Record consultation history when patient is completed
-     */
+    public boolean isEmergencyCase(String symptoms) {
+        if (symptoms == null || symptoms.isEmpty()) return false;
+        String lowerSymptoms = symptoms.toLowerCase();
+        return EMERGENCY_SYMPTOMS.stream()
+            .anyMatch(lowerSymptoms::contains);
+    }
+
     private void recordConsultationHistory(Patient patient) {
         ConsultationHistory history = ConsultationHistory.builder()
                 .patientId(patient.getId())
                 .token(patient.getToken())
-                .age(patient.getAge() != null ? patient.getAge() : 0)
-                .gender(patient.getGender() != null ? patient.getGender() : "Not Specified")
-                .doctor(patient.getDoctor() != null ? patient.getDoctor() : "Dr. Default")
+                .age(0)
+                .gender("Not Specified")
+                .doctor("Dr. Default")
                 .disease(patient.getDisease())
                 .dayOfWeek(LocalDateTime.now().getDayOfWeek().toString())
                 .timeSlot(getTimeSlot())
                 .predictedDuration(patient.getConsultationDuration())
                 .actualDuration(patient.getConsultationDuration())
-                .queueLength(patient.getQueuePosition() != null ? patient.getQueuePosition() : 0)
+                .queueLength(0)
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -76,35 +90,78 @@ public class PatientService {
     }
 
     @Transactional
-public PatientResponse addPatient(PatientRequest request) {
-    logInfo("Adding new patient: " + request.getName());
+    public PatientResponse addPatient(PatientRequest request) {
+        logInfo("Adding new patient: " + request.getName());
 
-    String token = generateNextToken();
-    Patient patient = new Patient();
-    patient.setToken(token);
-    patient.setName(request.getName());
-    patient.setPhone(request.getPhone());
-    patient.setDisease(request.getDisease());
-    patient.setStatus(PatientStatus.WAITING);
+        String token = generateNextToken();
+        Patient patient = new Patient();
+        patient.setToken(token);
+        patient.setName(request.getName());
+        patient.setPhone(request.getPhone());
+        patient.setDisease(request.getDisease());
+        patient.setStatus(PatientStatus.WAITING);
+        patient.setCreatedAt(LocalDateTime.now());
 
-    // Use disease average from database
-    int predictedDuration = getDiseaseAverageFromDB(request.getDisease());
-    patient.setConsultationDuration(predictedDuration);
+        // Check for emergency
+        String symptoms = request.getSymptoms();
+        boolean isEmergency = isEmergencyCase(symptoms);
+        boolean priorityApproved = request.getPriorityApproved() != null && request.getPriorityApproved();
+        
+        if (isEmergency && priorityApproved) {
+            patient.setIsEmergency(true);
+            patient.setEmergencyReason(request.getDisease());
+            patient.setPriorityApproved(true);
+            logInfo("🚨 EMERGENCY PRIORITY APPROVED for: " + request.getName());
+        }
 
-    patient.setCreatedAt(LocalDateTime.now());
+        int predictedDuration = getDiseaseAverageFromDB(request.getDisease());
+        patient.setConsultationDuration(predictedDuration);
 
-    Patient savedPatient = patientRepository.save(patient);
-    
-    // Recalculate all ETAs
-    recalculateEstimatedTimes();
-    broadcastQueueUpdate();
+        patient.setAge(0);
+        patient.setGender("Not Specified");
+        patient.setDoctor("Dr. Default");
+        patient.setDayOfWeek(LocalDateTime.now().getDayOfWeek().toString());
+        patient.setTimeSlot(getTimeSlot());
+        patient.setQueueLength(0);
 
-    return convertToResponse(savedPatient);
-}
+        Patient savedPatient = patientRepository.save(patient);
+        
+        // If emergency and approved, move to front
+        if (isEmergency && priorityApproved) {
+            moveToFrontOfQueue(savedPatient);
+        }
+        
+        recalculateEstimatedTimes();
+        broadcastQueueUpdate();
+
+        recordConsultationHistory(savedPatient);
+
+        return convertToResponse(savedPatient);
+    }
 
     /**
-     * Get disease average from database - DYNAMIC, NO HARDCODING
+     * Move emergency patient to front of queue
      */
+    private void moveToFrontOfQueue(Patient emergencyPatient) {
+        logInfo("Moving emergency patient " + emergencyPatient.getToken() + " to front of queue");
+        
+        List<Patient> waitingPatients = patientRepository
+                .findByStatusOrderByCreatedAtAsc(PatientStatus.WAITING);
+        
+        waitingPatients.removeIf(p -> p.getId().equals(emergencyPatient.getId()));
+        
+        int position = 1;
+        for (Patient p : waitingPatients) {
+            p.setQueuePosition(position + 1);
+            patientRepository.save(p);
+        }
+        
+        emergencyPatient.setQueuePosition(1);
+        patientRepository.save(emergencyPatient);
+        
+        logInfo("Emergency patient " + emergencyPatient.getToken() + " moved to front");
+    }
+
     private int getDiseaseAverageFromDB(String disease) {
         Optional<DiseaseStat> stat = diseaseStatRepository.findByDisease(disease);
         if (stat.isPresent()) {
@@ -165,6 +222,7 @@ public PatientResponse addPatient(PatientRequest request) {
                 .ifPresent(consulting -> {
                     consulting.setStatus(PatientStatus.COMPLETED);
                     patientRepository.save(consulting);
+                    logInfo("Completed consulting patient: " + consulting.getToken());
                 });
 
         Patient nextPatient = patientRepository
@@ -172,7 +230,10 @@ public PatientResponse addPatient(PatientRequest request) {
                 .orElseThrow(() -> new IllegalStateException("No patients in waiting queue"));
 
         nextPatient.setStatus(PatientStatus.CONSULTING);
+        nextPatient.setCreatedAt(LocalDateTime.now());
         Patient savedPatient = patientRepository.save(nextPatient);
+
+        logInfo("Called next patient: " + savedPatient.getToken() + " - " + savedPatient.getName());
 
         recalculateEstimatedTimes();
         broadcastQueueUpdate();
@@ -211,14 +272,22 @@ public PatientResponse addPatient(PatientRequest request) {
             throw new IllegalStateException("Only consulting patients can be completed");
         }
 
+        long actualDuration = java.time.Duration.between(patient.getCreatedAt(), LocalDateTime.now()).toMinutes();
+        logInfo("Patient " + patient.getToken() + " completed. Actual duration: " + actualDuration + " minutes");
+
         patient.setStatus(PatientStatus.COMPLETED);
+        patient.setConsultationDuration((int) Math.max(1, actualDuration));
         Patient savedPatient = patientRepository.save(patient);
 
-        // Record history for ML
         recordConsultationHistory(savedPatient);
 
         try {
-            callNext();
+            long waitingCount = patientRepository.countByStatus(PatientStatus.WAITING);
+            if (waitingCount > 0) {
+                callNext();
+            } else {
+                logInfo("No more patients in queue");
+            }
         } catch (IllegalStateException e) {
             logInfo("No more patients in queue");
         }
@@ -248,56 +317,59 @@ public PatientResponse addPatient(PatientRequest request) {
                 .collect(Collectors.toList());
     }
 
-@Transactional
-public void recalculateEstimatedTimes() {
-    logDebug("Recalculating estimated times");
+    @Transactional
+    public void recalculateEstimatedTimes() {
+        logDebug("Recalculating estimated times");
 
-    List<Patient> waitingPatients = patientRepository
-            .findByStatusOrderByCreatedAtAsc(PatientStatus.WAITING);
+        List<Patient> waitingPatients = patientRepository
+                .findByStatusOrderByCreatedAtAsc(PatientStatus.WAITING);
 
-    Patient consulting = patientRepository
-            .findTopByStatusOrderByCreatedAtAsc(PatientStatus.CONSULTING)
-            .orElse(null);
+        Patient consulting = patientRepository
+                .findTopByStatusOrderByCreatedAtAsc(PatientStatus.CONSULTING)
+                .orElse(null);
 
-    LocalDateTime currentTime = LocalDateTime.now();
-    LocalDateTime startTime;
+        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime startTime;
 
-    if (consulting != null) {
-        int consultingDuration = consulting.getConsultationDuration() != null ? 
-                consulting.getConsultationDuration() : DEFAULT_DURATION;
-        
-        long elapsedMinutes = java.time.Duration.between(consulting.getCreatedAt(), currentTime).toMinutes();
-        
-        int remainingMinutes = (int) Math.max(1, consultingDuration - elapsedMinutes);
-        
-        logDebug("Consulting: " + consulting.getToken() + ", Duration: " + consultingDuration + 
-                 ", Elapsed: " + elapsedMinutes + ", Remaining: " + remainingMinutes);
-        
-        consulting.setConsultationDuration(remainingMinutes);
-        patientRepository.save(consulting);
-        
-        startTime = currentTime.plusMinutes(remainingMinutes);
-        
-    } else {
-        startTime = currentTime;
+        if (consulting != null) {
+            int consultingDuration = consulting.getConsultationDuration() != null ?
+                    consulting.getConsultationDuration() : DEFAULT_DURATION;
+            
+            long elapsedMinutes = java.time.Duration.between(consulting.getCreatedAt(), currentTime).toMinutes();
+            int remainingMinutes = (int) Math.max(0, consultingDuration - elapsedMinutes);
+            
+            logDebug("Consulting: " + consulting.getToken() + 
+                     ", Duration: " + consultingDuration + 
+                     ", Elapsed: " + elapsedMinutes + 
+                     ", Remaining: " + remainingMinutes);
+            
+            consulting.setConsultationDuration(Math.max(1, remainingMinutes));
+            patientRepository.save(consulting);
+            startTime = currentTime.plusMinutes(remainingMinutes);
+        } else {
+            startTime = currentTime;
+        }
+
+        for (int i = 0; i < waitingPatients.size(); i++) {
+            Patient patient = waitingPatients.get(i);
+            int duration = patient.getConsultationDuration() != null ?
+                    patient.getConsultationDuration() : DEFAULT_DURATION;
+            
+            LocalDateTime etaTime = startTime.plusMinutes(duration);
+            String estimatedTime = etaTime.format(TIME_FORMATTER);
+            
+            patient.setEstimatedTime(estimatedTime);
+            patient.setQueuePosition(i + 1);
+            patientRepository.save(patient);
+            
+            logDebug("Patient: " + patient.getToken() + 
+                     ", Duration: " + duration + 
+                     ", ETA: " + estimatedTime + 
+                     ", Position: " + (i + 1));
+            
+            startTime = etaTime;
+        }
     }
-
-    for (int i = 0; i < waitingPatients.size(); i++) {
-        Patient patient = waitingPatients.get(i);
-        int duration = patient.getConsultationDuration() != null ? 
-                patient.getConsultationDuration() : DEFAULT_DURATION;
-        
-        String estimatedTime = startTime.format(TIME_FORMATTER);
-        patient.setEstimatedTime(estimatedTime);
-        patient.setQueuePosition(i + 1);
-        
-        logDebug("Patient: " + patient.getToken() + ", Duration: " + duration + 
-                 ", ETA: " + estimatedTime + ", Position: " + (i + 1));
-        
-        patientRepository.save(patient);
-        startTime = startTime.plusMinutes(duration);
-    }
-}
 
     private void broadcastQueueUpdate() {
         QueueResponse queueResponse = getQueue();
