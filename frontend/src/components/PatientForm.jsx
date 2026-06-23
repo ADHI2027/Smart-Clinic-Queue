@@ -65,7 +65,7 @@ const PatientForm = ({ onPatientAdded, onSearchPatient }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    console.log('📤 Sending patient data:', patientData);
     if (!validateForm()) {
       toast.error('Please fix the errors in the form');
       return;

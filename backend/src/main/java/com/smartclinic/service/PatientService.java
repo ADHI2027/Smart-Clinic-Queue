@@ -92,7 +92,9 @@ public class PatientService {
     @Transactional
     public PatientResponse addPatient(PatientRequest request) {
         logInfo("Adding new patient: " + request.getName());
-
+        System.out.println("🔍 Symptoms received: " + request.getSymptoms());
+        System.out.println("🔍 isEmergency flag: " + request.getIsEmergency());
+        System.out.println("🔍 priorityApproved flag: " + request.getPriorityApproved());
         String token = generateNextToken();
         Patient patient = new Patient();
         patient.setToken(token);
@@ -106,7 +108,8 @@ public class PatientService {
         String symptoms = request.getSymptoms();
         boolean isEmergency = isEmergencyCase(symptoms);
         boolean priorityApproved = request.getPriorityApproved() != null && request.getPriorityApproved();
-        
+        System.out.println("🚨 isEmergency: " + isEmergency);
+        System.out.println("✅ priorityApproved: " + priorityApproved);
         if (isEmergency && priorityApproved) {
             patient.setIsEmergency(true);
             patient.setEmergencyReason(request.getDisease());
