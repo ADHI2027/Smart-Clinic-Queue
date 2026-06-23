@@ -25,7 +25,7 @@ public class PatientRequest {
     
     private Integer consultationDuration;
     
-    private String symptoms;  // ADD THIS
+    private String symptoms;
     
     private Boolean isEmergency;
     
