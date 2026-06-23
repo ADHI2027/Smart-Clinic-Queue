@@ -92,18 +92,6 @@ public class PatientService {
     @Transactional
     public PatientResponse addPatient(PatientRequest request) {
         logInfo("Adding new patient: " + request.getName());
-        // DEBUG: Print symptoms
-    System.out.println("🔍 Received symptoms: " + request.getSymptoms());
-    
-    // Check for emergency
-    String symptoms = request.getSymptoms();
-    boolean isEmergency = isEmergencyCase(symptoms);
-    
-    // DEBUG: Print emergency result
-    System.out.println("🚨 Emergency detected: " + isEmergency);
-    
-    boolean priorityApproved = request.getPriorityApproved() != null && request.getPriorityApproved();
-    System.out.println("✅ Priority approved: " + priorityApproved);
 
         String token = generateNextToken();
         Patient patient = new Patient();
@@ -114,7 +102,7 @@ public class PatientService {
         patient.setStatus(PatientStatus.WAITING);
         patient.setCreatedAt(LocalDateTime.now());
 
-        // Check for emergency
+        // Check for emergency - NO DUPLICATE DECLARATIONS
         String symptoms = request.getSymptoms();
         boolean isEmergency = isEmergencyCase(symptoms);
         boolean priorityApproved = request.getPriorityApproved() != null && request.getPriorityApproved();
@@ -151,9 +139,6 @@ public class PatientService {
         return convertToResponse(savedPatient);
     }
 
-    /**
-     * Move emergency patient to front of queue
-     */
     private void moveToFrontOfQueue(Patient emergencyPatient) {
         logInfo("Moving emergency patient " + emergencyPatient.getToken() + " to front of queue");
         
