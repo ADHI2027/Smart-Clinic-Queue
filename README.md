@@ -1,31 +1,35 @@
-# 🏥 SmartClinic Queue Management System
+# 🏥 QUEUE SOLVED - Clinic Queue Management System
 
-A production-ready clinic queue management system with real-time updates, dynamic ETA predictions, and ML-enhanced waiting time calculations.
+A production-ready clinic queue management system with real-time updates, dynamic ETA predictions, emergency priority, and self-registration via QR code.
 
-![SmartClinic Queue](https://img.shields.io/badge/version-1.0.0-blue)
+![QUEUE SOLVED](https://img.shields.io/badge/version-1.0.0-blue)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.1.5-green)
 ![React](https://img.shields.io/badge/React-18-blue)
 ![MongoDB](https://img.shields.io/badge/MongoDB-6.0-green)
+![Railway](https://img.shields.io/badge/Railway-Deployed-blueviolet)
+![Vercel](https://img.shields.io/badge/Vercel-Deployed-black)
 
 ---
 
 ## 📋 Overview
 
-SmartClinic is a **modern clinic queue management system** that eliminates paper tokens and provides real-time queue visibility. It features a **Receptionist Dashboard** and a **Waiting Room TV Display** with automatic real-time updates.
+**QUEUE SOLVED** is a modern clinic queue management system that eliminates paper tokens and provides real-time queue visibility. It features a **Receptionist Dashboard**, **Waiting Room TV Display**, **QR-based Self-Registration**, and **Emergency Priority Queue**.
 
 ### 🎯 Key Features
 
-- ✅ **Real-time Queue Management** - Add, call, skip, complete, or delete patients
-- ✅ **Automatic Token Generation** - Sequential tokens (A001, A002, A003...)
-- ✅ **Live TV Display** - Shows current consulting patient and upcoming tokens
-- ✅ **WebSocket Updates** - Instant synchronization between all screens
-- ✅ **Dynamic ETA Calculation** - Uses disease averages from database
-- ✅ **ML-Enhanced Predictions** - Self-learning system that improves with data
-- ✅ **Doctor Analytics** - Track total patients, completed, waiting, and averages
-- ✅ **Secure Login** - Protected receptionist dashboard
-- ✅ **Patient Search** - Search patients by phone number
-- ✅ **Estimated End Time** - Shows when consultation will finish
-- ✅ **Responsive Design** - Works on all screen sizes
+| Feature | Description |
+|---------|-------------|
+| **Real-time Queue Management** | Add, call, skip, complete, or delete patients |
+| **Automatic Token Generation** | Sequential tokens (A001, A002, A003...) |
+| **Live TV Display** | Shows current consulting patient and upcoming tokens |
+| **WebSocket Updates** | Instant synchronization between all screens |
+| **Dynamic ETA Calculation** | Uses disease averages from database |
+| **QR Self-Registration** | Patients can register by scanning QR code on TV |
+| **Emergency Priority** | Critical patients moved to front of queue |
+| **Voice Announcements** | Automatic voice alerts when calling patients |
+| **Doctor Analytics** | Track total patients, completed, waiting, and averages |
+| **Secure Login** | Protected receptionist dashboard |
+| **Patient Search** | Search patients by phone number |
 
 ---
 
@@ -65,12 +69,35 @@ React Toastify (Notifications)
 
 React Icons
 
+QRCode.react
+
 text
 
 ### Database
-MongoDB 6+
+MongoDB Atlas (Cloud)
 
 text
+
+### Deployment
+Backend: Railway
+
+Frontend: Vercel
+
+text
+
+---
+
+## 🚀 Live Demo
+
+| Service | URL |
+|---------|-----|
+| **Frontend** | `https://your-vercel-app.vercel.app` |
+| **Backend API** | `https://smart-clinic-queue-production.up.railway.app` |
+| **Health Check** | `https://smart-clinic-queue-production.up.railway.app/health` |
+
+**Login Credentials:**
+- Username: `receptionist`
+- Password: `clinic123`
 
 ---
 
@@ -81,11 +108,14 @@ smartclinic-queue/
 │ │ ├── SmartClinicApplication.java
 │ │ ├── config/
 │ │ │ ├── CorsConfig.java
-│ │ │ └── WebSocketConfig.java
+│ │ │ ├── WebSocketConfig.java
+│ │ │ └── MongoDBConfig.java
 │ │ ├── controller/
 │ │ │ ├── PatientController.java
 │ │ │ ├── ETAController.java
-│ │ │ └── MLController.java
+│ │ │ ├── SelfRegistrationController.java
+│ │ │ ├── HealthController.java
+│ │ │ └── TestController.java
 │ │ ├── model/
 │ │ │ ├── Patient.java
 │ │ │ ├── PatientStatus.java
@@ -109,7 +139,9 @@ smartclinic-queue/
 │ │ │ ├── PatientRequest.java
 │ │ │ ├── PatientResponse.java
 │ │ │ ├── QueueResponse.java
-│ │ │ └── ETAResponse.java
+│ │ │ ├── ETAResponse.java
+│ │ │ ├── SelfRegistrationRequest.java
+│ │ │ └── SelfRegistrationResponse.java
 │ │ └── exception/
 │ │ ├── PatientNotFoundException.java
 │ │ └── GlobalExceptionHandler.java
@@ -117,8 +149,6 @@ smartclinic-queue/
 │ │ └── application.properties
 │ └── pom.xml
 ├── frontend/
-│ ├── public/
-│ │ └── index.html
 │ ├── src/
 │ │ ├── index.js
 │ │ ├── index.css
@@ -132,7 +162,9 @@ smartclinic-queue/
 │ │ │ ├── TVDisplay.jsx
 │ │ │ ├── CurrentPatientCard.jsx
 │ │ │ ├── UpcomingTokens.jsx
-│ │ │ └── DoctorAnalytics.jsx
+│ │ │ ├── SelfRegistration.jsx
+│ │ │ ├── DoctorAnalytics.jsx
+│ │ │ └── VoiceAnnouncement.jsx
 │ │ ├── services/
 │ │ │ ├── api.js
 │ │ │ └── websocket.js
@@ -140,9 +172,10 @@ smartclinic-queue/
 │ │ ├── dashboard.css
 │ │ ├── tvdisplay.css
 │ │ ├── queue.css
-│ │ └── login.css
+│ │ ├── login.css
+│ │ └── self-registration.css
 │ ├── package.json
-│ └── .env
+│ └── .env.production
 └── README.md
 
 text
@@ -155,21 +188,18 @@ text
 ```javascript
 {
   _id: ObjectId,
-  token: "A001",                    // Auto-generated
+  token: "A001",
   name: "Ram Kumar",
   phone: "9876543210",
   disease: "Fever",
-  status: "WAITING",                // WAITING | CONSULTING | COMPLETED | SKIPPED
-  consultationDuration: 8,          // In minutes (from disease average)
-  estimatedTime: "10:45 AM",        // When patient will be called
+  status: "WAITING",
+  consultationDuration: 8,
+  estimatedTime: "10:45 AM",
   queuePosition: 1,
   createdAt: Date,
-  // ML Fields
-  age: 35,
-  gender: "Male",
-  doctor: "Dr. Arun",
-  dayOfWeek: "Monday",
-  timeSlot: "Morning"
+  isEmergency: false,
+  emergencyReason: null,
+  priorityApproved: false
 }
 2. disease_statistics
 javascript
@@ -210,25 +240,6 @@ javascript
   queueLength: 2,
   createdAt: Date
 }
-5. ml_metadata
-javascript
-{
-  _id: ObjectId,
-  modelVersion: "v1.0",
-  algorithm: "WeightedAverage",
-  trainingDate: Date,
-  trainingRecords: 150,
-  accuracy: 0.85,
-  mae: 3.5,
-  isActive: true,
-  featureWeights: {
-    disease: 0.35,
-    doctor: 0.25,
-    queue: 0.25,
-    time: 0.10,
-    base: 0.05
-  }
-}
 🔌 API Endpoints
 Patient Management
 Method	Endpoint	Description
@@ -240,14 +251,18 @@ POST	/api/patient/{id}/complete	Complete consultation
 DELETE	/api/patient/{id}	Delete a patient
 GET	/api/patient/search?phone=	Search by phone
 GET	/api/patient/consulting	Get current consulting patient
+Self-Registration
+Method	Endpoint	Description
+POST	/api/self-register	Register via QR code
 ETA & ML
 Method	Endpoint	Description
 GET	/api/eta/{token}	Get ETA for a patient
 GET	/api/eta/statistics/disease	Get disease statistics
 GET	/api/eta/statistics/doctor	Get doctor statistics
-POST	/api/ml/train	Train ML model
-GET	/api/ml/metrics	Get model metrics
-GET	/api/ml/predict	Get ML prediction
+Health Check
+Method	Endpoint	Description
+GET	/health	Check if backend is running
+GET	/	Welcome message
 WebSocket
 Endpoint	Description
 /ws	WebSocket endpoint
@@ -258,88 +273,70 @@ Java 21 or higher
 
 Node.js 16+ and npm
 
-MongoDB 6+
+MongoDB Atlas account
 
-Maven 3.8+
+Git
 
 Step 1: Clone the Repository
 bash
-git clone <repository-url>
+git clone https://github.com/your-username/smartclinic-queue.git
 cd smartclinic-queue
-Step 2: MongoDB Setup
-A. Start MongoDB Service
-Windows:
+Step 2: MongoDB Atlas Setup
+Create a free cluster at MongoDB Atlas
+
+Create a database user
+
+Whitelist IP addresses (0.0.0.0/0 for testing)
+
+Get your connection string:
+
+text
+mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/smartclinic_queue?retryWrites=true&w=majority
+Step 3: Backend Deployment (Railway)
+Go to Railway
+
+Click "New Project" → "Deploy from GitHub"
+
+Select your repository
+
+Add environment variables:
+
+Variable	Value
+MONGODB_URI	Your MongoDB Atlas connection string
+PORT	8080
+Deploy and get your URL: https://your-app.up.railway.app
+
+Step 4: Frontend Deployment (Vercel)
+Go to Vercel
+
+Click "Add New" → "Project"
+
+Select your repository
+
+Add environment variables:
+
+Variable	Value
+REACT_APP_API_URL	https://your-app.up.railway.app
+REACT_APP_WS_URL	wss://your-app.up.railway.app/ws
+REACT_APP_BASE_URL	https://your-vercel-app.vercel.app
+Deploy
+
+Step 5: Local Development
+Start MongoDB:
 
 bash
-# As Administrator
-net start MongoDB
-
-# Or manual start
 cd "C:\Program Files\MongoDB\Server\8.3\bin"
 mongod.exe --dbpath "C:\data\db"
-macOS:
+Start Backend:
 
-bash
-brew services start mongodb-community
-Linux:
-
-bash
-sudo systemctl start mongod
-B. Create Database & Collections
-Using MongoDB Compass:
-
-Connect to mongodb://localhost:27017
-
-Create database: smartclinic_queue
-
-Create collections:
-
-patients
-
-disease_statistics
-
-doctor_statistics
-
-consultation_history
-
-ml_metadata
-
-C. Insert Disease Data
-Insert these documents into disease_statistics:
-
-json
-[
-  {"disease": "Fever", "averageDuration": 8.5, "minDuration": 3, "maxDuration": 12, "totalPatients": 45},
-  {"disease": "Cold", "averageDuration": 5.5, "minDuration": 3, "maxDuration": 8, "totalPatients": 32},
-  {"disease": "Diabetes", "averageDuration": 18.5, "minDuration": 10, "maxDuration": 25, "totalPatients": 38},
-  {"disease": "BP", "averageDuration": 10.5, "minDuration": 5, "maxDuration": 15, "totalPatients": 25},
-  {"disease": "Migraine", "averageDuration": 15.0, "minDuration": 10, "maxDuration": 20, "totalPatients": 18},
-  {"disease": "Pregnancy", "averageDuration": 25.5, "minDuration": 15, "maxDuration": 40, "totalPatients": 12},
-  {"disease": "Emergency", "averageDuration": 30.0, "minDuration": 20, "maxDuration": 45, "totalPatients": 8}
-]
-D. Insert Doctor Data
-Insert these documents into doctor_statistics:
-
-json
-[
-  {"doctor": "Dr. Arun", "averageDuration": 12.5, "minDuration": 5, "maxDuration": 22, "totalPatients": 42},
-  {"doctor": "Dr. Ravi", "averageDuration": 10.0, "minDuration": 4, "maxDuration": 18, "totalPatients": 35},
-  {"doctor": "Dr. Priya", "averageDuration": 14.5, "minDuration": 8, "maxDuration": 25, "totalPatients": 28}
-]
-Step 3: Backend Setup
 bash
 cd backend
-mvn clean install
 mvn spring-boot:run
-The backend will run on: http://localhost:8080
+Start Frontend:
 
-Step 4: Frontend Setup
 bash
 cd frontend
-npm install
 npm start
-The frontend will run on: http://localhost:3000
-
 🎮 How to Use
 Login
 text
@@ -347,159 +344,103 @@ URL: http://localhost:3000
 Username: receptionist
 Password: clinic123
 Receptionist Dashboard
-1. Add a Patient
-Fill in: Name, Phone, Disease
+Add patients with name, phone, disease, and symptoms
 
-Click "Add Patient"
+Emergency symptoms auto-detect and prompt for priority
 
-System automatically calculates duration from disease average
+Queue management with Call Next, Skip, Complete, Delete
 
-Patient added to queue with auto-generated token (A001, A002...)
+Analytics dashboard
 
-2. Manage Queue
-Button	Action
-Call Next	Moves first waiting patient to consulting
-Skip	Skips a waiting patient
-Complete	Completes consultation and automatically calls next
-Delete	Removes patient from queue
-3. Search Patients
-Enter phone number
+TV Display
+Shows currently consulting patient with ETA
 
-Click "Search"
+Shows upcoming tokens with estimated times
 
-View patient details
+QR code for self-registration
 
-4. View Analytics
-Click "Show Analytics"
+Fullscreen mode
 
-View: Total Patients, Completed, Waiting, Average Time
+Self-Registration
+Scan QR code on TV display
 
-5. TV Display
-Click "TV Display" button
+Fill in patient details
 
-Opens TV display in new tab
+Get token and estimated wait time
 
-TV Display (Waiting Room)
-text
-URL: http://localhost:3000/tv
-Shows:
+Track queue in real-time
 
-Currently Consulting - Token, Name, Disease, Start Time, End Time
+🚨 Emergency Priority System
+The system automatically detects emergency symptoms:
 
-Upcoming Tokens - List of waiting patients with their ETAs
+Emergency Symptoms	Action
+Chest Pain	🚨 Priority Queue
+Breathing Difficulty	🚨 Priority Queue
+Heavy Bleeding	🚨 Priority Queue
+Stroke Symptoms	🚨 Priority Queue
+Severe Burns	🚨 Priority Queue
+Seizures	🚨 Priority Queue
+High Fever	🚨 Priority Queue
+Flow:
 
-Features:
+Receptionist enters symptoms
 
-🔄 Auto-updates in real-time (no refresh needed)
+System detects emergency
 
-🖥️ Fullscreen mode available
+Popup asks for priority approval
 
-🔢 Large fonts for easy viewing
+Patient moved to front of queue
 
-⏰ Estimated End Time for each patient
+TV displays emergency badge
 
-🧠 How ETA Prediction Works
-1. Disease-Based Prediction
-text
-Step 1: Patient selects disease "Fever"
-Step 2: System queries disease_statistics
-Step 3: Finds Fever average = 8.5 minutes
-Step 4: Uses 8.5 minutes as consultation duration
-2. Queue ETA Calculation
-text
-Current Time: 10:00 AM
-Consulting: A001 (10 mins, started 09:50 AM, remaining 0 mins)
-Queue:
-  A002 (8.5 mins) → ETA: 10:00 + 8.5 = 10:08 AM
-  A003 (18.5 mins) → ETA: 10:08 + 18.5 = 10:26 AM
-  A004 (5.5 mins) → ETA: 10:26 + 5.5 = 10:31 AM
-3. ML Enhancement
-The system uses a Weighted Average model that learns from historical data:
+Voice announcement for emergency
 
-text
-ML Prediction = 0.35 × DiseaseAvg + 0.25 × DoctorAvg + 0.25 × QueueFactor + 0.10 × TimeFactor + 0.05 × Base
+🔊 Voice Announcements
+Automatic when "Call Next" is clicked
 
-Weights automatically adjust as more data is collected
-📊 Analytics Dashboard
-Metric	Description
-Total Patients	All patients registered today
-Completed	Patients who have finished consultation
-Waiting	Patients currently in queue
-Average Time	Average consultation duration
-🔄 Real-Time Updates (WebSocket)
-text
-1. Receptionist adds patient
-2. Backend saves to MongoDB
-3. Broadcasts update to WebSocket
-4. TV Display updates instantly
-5. Dashboard updates instantly
-No page refresh needed!
+"Token Number A016, please proceed to the consultation room"
+
+Emergency: "Emergency patient A025, please proceed immediately"
+
+Toggle ON/OFF via speaker icon
+
+📊 ETA Prediction
+How It Works
+Patient selects disease
+
+System looks up disease average
+
+Calculates estimated time based on queue position
+
+Updates in real-time as patients complete
+
+Confidence Intervals
+Shows wait time as range: 15 ± 5 mins
+
+Probabilities: within 10min, 20min, 30min
 
 🛠️ Troubleshooting
-MongoDB Connection Issues
+Backend Not Starting
 bash
-# Check if MongoDB is running
-net start MongoDB  # Windows
-sudo systemctl status mongod  # Linux
-brew services list  # macOS
-
-# If port 27017 is in use
-taskkill /IM mongod.exe /F  # Windows
-sudo killall mongod  # Linux/macOS
-Backend Won't Start
-bash
-# Check if port 8080 is in use
-netstat -ano | findstr 8080  # Windows
-lsof -i :8080  # macOS/Linux
-
-# Rebuild
+cd backend
 mvn clean compile
 mvn spring-boot:run
-Frontend Won't Start
+Frontend Not Starting
 bash
-# Reinstall dependencies
-rm -rf node_modules
+cd frontend
 npm install
 npm start
+MongoDB Connection Failed
+Check MongoDB URI in Railway variables
 
-# If port 3000 is in use
-npm start -- --port 3001
-Compilation Errors
-bash
-# Clean build
-mvn clean compile
+Whitelist IP in MongoDB Atlas
 
-# Check for duplicate imports in React components
-# Remove any duplicate import statements
-🌟 Bonus Features
-1. Disease Averages Auto-Update
-System records every consultation
+Check network access
 
-Averages recalculated daily at 2 AM
+WebSocket Connection Failed
+Update REACT_APP_WS_URL in Vercel
 
-Predictions improve with more data
-
-2. ML Model Training
-Train model: POST /api/ml/train
-
-Check metrics: GET /api/ml/metrics
-
-Get prediction: GET /api/ml/predict?disease=Fever&queueLength=2
-
-3. Search by Phone
-Find patient history
-
-Quick lookup for returning patients
-
-4. Estimated End Time
-Shows when consultation will finish
-
-Helps patients plan their time
-
-5. TV Display Button
-One-click access from dashboard
-
-Opens in new tab
+Check CORS configuration
 
 📝 License
 This project is licensed under the MIT License.
@@ -509,66 +450,42 @@ Fork the repository
 
 Create your feature branch: git checkout -b feature/AmazingFeature
 
-Commit your changes: git commit -m 'Add some AmazingFeature'
+Commit: git commit -m 'Add some AmazingFeature'
 
-Push to the branch: git push origin feature/AmazingFeature
+Push: git push origin feature/AmazingFeature
 
 Open a Pull Request
 
 📧 Support
-For support, email: support@smartclinic.com
+For support, email: support@queuesolved.com
 
 🎉 Acknowledgments
 Built with ❤️ using Spring Boot and React
 
 Real-time updates powered by WebSocket
 
-Smart predictions with ML
+Deployed on Railway and Vercel
 
 📌 Quick Reference
-Commands Summary
+Commands
 bash
-# Start MongoDB
-cd "C:\Program Files\MongoDB\Server\8.3\bin" && mongod.exe --dbpath "C:\data\db"
-
-# Start Backend
+# Backend
 cd backend && mvn spring-boot:run
 
-# Start Frontend
+# Frontend
 cd frontend && npm start
 
-# Login
-Username: receptionist
-Password: clinic123
+# Deploy Backend
+git push origin main
 
-# Access
-Dashboard: http://localhost:3000
-TV Display: http://localhost:3000/tv
-Default Disease Durations
-Disease	Duration
-Fever	8.5 mins
-Cold	5.5 mins
-Diabetes	18.5 mins
-BP	10.5 mins
-Migraine	15.0 mins
-Pregnancy	25.5 mins
-Emergency	30.0 mins
-Made with ❤️ for clinics everywhere
-
+# Deploy Frontend (Vercel)
+vercel --prod
+URLs
 text
-
+Local:      http://localhost:3000
+Backend:    https://your-app.up.railway.app
+Frontend:   https://your-vercel-app.vercel.app
+Health:     https://your-app.up.railway.app/health
+QUEUE SOLVED - Making clinic queues smart, fast, and patient-friendly! 🏥🚀
 ---
 
-This README is now complete and covers:
-- ✅ Project overview and features
-- ✅ Technology stack
-- ✅ Complete folder structure
-- ✅ Database schema
-- ✅ API documentation
-- ✅ Installation & setup guide
-- ✅ How to use
-- ✅ ETA prediction explanation
-- ✅ Troubleshooting guide
-- ✅ Quick reference
-
-Save this as `README.md` in your project root! 🚀
