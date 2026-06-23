@@ -271,52 +271,91 @@ Endpoint	Description
 /ws	WebSocket endpoint
 /topic/queue	Queue updates
 
-###URL: https://smart-clinic-queue-git-main-shriadhithyat-5905s-projects.vercel.app/
-###Username: receptionist
-###Password: clinic123
+🌐 Live Demo
 
----
-##Receptionist Dashboard
-Add patients with name, phone, disease, and symptoms
+URL:
+https://smart-clinic-queue-git-main-shriadhithyat-5905s-projects.vercel.app/
 
-##Emergency symptoms auto-detect and prompt for priority
-
-##Queue management with Call Next, Skip, Complete, Delete
-
-##Analytics dashboard
-
-##TV Display
-Shows currently consulting patient with ETA
-
-Shows upcoming tokens with estimated times
-
+Demo Credentials
+Role	Username	Password
+Receptionist	receptionist	clinic123
+🚀 Features
+🩺 Receptionist Dashboard
+Add patients with:
+Name
+Phone Number
+Disease
+Symptoms
+Automatic token generation
+Emergency symptom detection with priority approval
+Queue management:
+Call Next
+Skip Patient
+Complete Consultation
+Delete Patient
+Doctor and queue analytics dashboard
+📺 TV Display
+Shows currently consulting patient
+Displays estimated consultation time
+Shows upcoming tokens with ETA
+Emergency badge for priority patients
 QR code for self-registration
+Fullscreen mode for waiting rooms
+Real-time updates using WebSockets
+📱 Self Registration
 
-Fullscreen mode
+Patients or guardians can:
 
-##Self-Registration
-Scan QR code on TV display
+Scan QR code from TV display
+Fill patient details
+Get token instantly
+View estimated waiting time
+Track queue status in real time
+🚨 Emergency Priority Queue
 
-Fill in patient details
+The system automatically detects emergency symptoms such as:
 
-Get token and estimated wait time
+Chest Pain
+Breathing Difficulty
+Heavy Bleeding
+Stroke Symptoms
+Severe Burns
+High Fever with Seizures
+Workflow
+Receptionist enters symptoms.
+System detects emergency symptoms.
+Popup asks for priority approval.
+Patient is moved to the front of the queue.
+TV display shows emergency badge.
+Voice assistant announces emergency patient.
+🔊 Voice Assistant
 
-Track queue in real-time
----
-###Flow:
+English voice announcements for:
 
-Receptionist enters symptoms
+Current token
+Next patient
+Emergency patient alerts
 
-System detects emergency
+Example:
 
-Popup asks for priority approval
+"Token A016, please proceed to the consultation room."
 
-Patient moved to front of queue
+"Emergency patient A025, please proceed immediately."
 
-TV displays emergency badge
+🤖 AI ETA Prediction
 
-Voice announcement for emergency
+The system predicts consultation duration using:
 
+Disease-wise consultation history
+MongoDB historical records
+Continuously updated average consultation duration
+
+Features:
+
+Dynamic ETA prediction
+Auto-learning from completed consultations
+Real-time ETA recalculation
+Queue health monitoring
 🔊 Voice Announcements
 Automatic when "Call Next" is clicked
 
@@ -340,30 +379,6 @@ Confidence Intervals
 Shows wait time as range: 15 ± 5 mins
 
 Probabilities: within 10min, 20min, 30min
-
-🛠️ Troubleshooting
-Backend Not Starting
-bash
-cd backend
-mvn clean compile
-mvn spring-boot:run
-Frontend Not Starting
-bash
-cd frontend
-npm install
-npm start
-MongoDB Connection Failed
-Check MongoDB URI in Railway variables
-
-Whitelist IP in MongoDB Atlas
-
-Check network access
-
-WebSocket Connection Failed
-Update REACT_APP_WS_URL in Vercel
-
-Check CORS configuration
-
 📝 License
 This project is licensed under the MIT License.
 
@@ -378,36 +393,10 @@ Push: git push origin feature/AmazingFeature
 
 Open a Pull Request
 
-📧 Support
-For support, email: support@queuesolved.com
-
 🎉 Acknowledgments
 Built with ❤️ using Spring Boot and React
 
 Real-time updates powered by WebSocket
 
 Deployed on Railway and Vercel
-
-📌 Quick Reference
-Commands
-bash
-# Backend
-cd backend && mvn spring-boot:run
-
-# Frontend
-cd frontend && npm start
-
-# Deploy Backend
-git push origin main
-
-# Deploy Frontend (Vercel)
-vercel --prod
-URLs
-text
-Local:      http://localhost:3000
-Backend:    https://your-app.up.railway.app
-Frontend:   https://your-vercel-app.vercel.app
-Health:     https://your-app.up.railway.app/health
-QUEUE SOLVED - Making clinic queues smart, fast, and patient-friendly! 🏥🚀
----
 
