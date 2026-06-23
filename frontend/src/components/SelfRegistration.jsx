@@ -33,7 +33,8 @@ const SelfRegistration = () => {
 
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:8080/api/self-register', formData);
+      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+const res = await axios.post(`${API_URL}/api/self-register`, formData);
       setResponse(res.data);
       setRegistrationComplete(true);
       toast.success('Registration successful!');
