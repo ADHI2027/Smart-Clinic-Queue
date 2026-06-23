@@ -102,83 +102,86 @@ text
 ---
 
 ## 📁 Project Structure
+
+```text
 smartclinic-queue/
 ├── backend/
-│ ├── src/main/java/com/smartclinic/
-│ │ ├── SmartClinicApplication.java
-│ │ ├── config/
-│ │ │ ├── CorsConfig.java
-│ │ │ ├── WebSocketConfig.java
-│ │ │ └── MongoDBConfig.java
-│ │ ├── controller/
-│ │ │ ├── PatientController.java
-│ │ │ ├── ETAController.java
-│ │ │ ├── SelfRegistrationController.java
-│ │ │ ├── HealthController.java
-│ │ │ └── TestController.java
-│ │ ├── model/
-│ │ │ ├── Patient.java
-│ │ │ ├── PatientStatus.java
-│ │ │ ├── DiseaseStat.java
-│ │ │ ├── DoctorStat.java
-│ │ │ ├── ConsultationHistory.java
-│ │ │ └── MLMetadata.java
-│ │ ├── repository/
-│ │ │ ├── PatientRepository.java
-│ │ │ ├── DiseaseStatRepository.java
-│ │ │ ├── DoctorStatRepository.java
-│ │ │ ├── ConsultationHistoryRepository.java
-│ │ │ └── MLMetadataRepository.java
-│ │ ├── service/
-│ │ │ ├── PatientService.java
-│ │ │ ├── QueueWebSocketService.java
-│ │ │ ├── ETAService.java
-│ │ │ ├── MLPredictionService.java
-│ │ │ └── StatisticsService.java
-│ │ ├── dto/
-│ │ │ ├── PatientRequest.java
-│ │ │ ├── PatientResponse.java
-│ │ │ ├── QueueResponse.java
-│ │ │ ├── ETAResponse.java
-│ │ │ ├── SelfRegistrationRequest.java
-│ │ │ └── SelfRegistrationResponse.java
-│ │ └── exception/
-│ │ ├── PatientNotFoundException.java
-│ │ └── GlobalExceptionHandler.java
-│ ├── src/main/resources/
-│ │ └── application.properties
-│ └── pom.xml
-├── frontend/
-│ ├── src/
-│ │ ├── index.js
-│ │ ├── index.css
-│ │ ├── App.js
-│ │ ├── App.css
-│ │ ├── components/
-│ │ │ ├── Login.jsx
-│ │ │ ├── ReceptionistDashboard.jsx
-│ │ │ ├── PatientForm.jsx
-│ │ │ ├── QueueTable.jsx
-│ │ │ ├── TVDisplay.jsx
-│ │ │ ├── CurrentPatientCard.jsx
-│ │ │ ├── UpcomingTokens.jsx
-│ │ │ ├── SelfRegistration.jsx
-│ │ │ ├── DoctorAnalytics.jsx
-│ │ │ └── VoiceAnnouncement.jsx
-│ │ ├── services/
-│ │ │ ├── api.js
-│ │ │ └── websocket.js
-│ │ └── styles/
-│ │ ├── dashboard.css
-│ │ ├── tvdisplay.css
-│ │ ├── queue.css
-│ │ ├── login.css
-│ │ └── self-registration.css
-│ ├── package.json
-│ └── .env.production
-└── README.md
+│   ├── src/main/java/com/smartclinic/
+│   │   ├── SmartClinicApplication.java
+│   │   ├── config/
+│   │   │   ├── CorsConfig.java
+│   │   │   ├── WebSocketConfig.java
+│   │   │   └── MongoDBConfig.java
+│   │   ├── controller/
+│   │   │   ├── PatientController.java
+│   │   │   ├── ETAController.java
+│   │   │   ├── SelfRegistrationController.java
+│   │   │   ├── HealthController.java
+│   │   │   └── TestController.java
+│   │   ├── model/
+│   │   │   ├── Patient.java
+│   │   │   ├── PatientStatus.java
+│   │   │   ├── DiseaseStat.java
+│   │   │   ├── DoctorStat.java
+│   │   │   ├── ConsultationHistory.java
+│   │   │   └── MLMetadata.java
+│   │   ├── repository/
+│   │   │   ├── PatientRepository.java
+│   │   │   ├── DiseaseStatRepository.java
+│   │   │   ├── DoctorStatRepository.java
+│   │   │   ├── ConsultationHistoryRepository.java
+│   │   │   └── MLMetadataRepository.java
+│   │   ├── service/
+│   │   │   ├── PatientService.java
+│   │   │   ├── QueueWebSocketService.java
+│   │   │   ├── ETAService.java
+│   │   │   ├── MLPredictionService.java
+│   │   │   └── StatisticsService.java
+│   │   ├── dto/
+│   │   │   ├── PatientRequest.java
+│   │   │   ├── PatientResponse.java
+│   │   │   ├── QueueResponse.java
+│   │   │   ├── ETAResponse.java
+│   │   │   ├── SelfRegistrationRequest.java
+│   │   │   └── SelfRegistrationResponse.java
+│   │   └── exception/
+│   │       ├── PatientNotFoundException.java
+│   │       └── GlobalExceptionHandler.java
+│   ├── src/main/resources/
+│   │   └── application.properties
+│   └── pom.xml
 
-text
+├── frontend/
+│   ├── src/
+│   │   ├── index.js
+│   │   ├── index.css
+│   │   ├── App.js
+│   │   ├── App.css
+│   │   ├── components/
+│   │   │   ├── Login.jsx
+│   │   │   ├── ReceptionistDashboard.jsx
+│   │   │   ├── PatientForm.jsx
+│   │   │   ├── QueueTable.jsx
+│   │   │   ├── TVDisplay.jsx
+│   │   │   ├── CurrentPatientCard.jsx
+│   │   │   ├── UpcomingTokens.jsx
+│   │   │   ├── SelfRegistration.jsx
+│   │   │   ├── DoctorAnalytics.jsx
+│   │   │   └── VoiceAnnouncement.jsx
+│   │   ├── services/
+│   │   │   ├── api.js
+│   │   │   └── websocket.js
+│   │   └── styles/
+│   │       ├── dashboard.css
+│   │       ├── tvdisplay.css
+│   │       ├── queue.css
+│   │       ├── login.css
+│   │       └── self-registration.css
+│   ├── package.json
+│   └── .env.production
+
+└── README.md
+```
 
 ---
 
@@ -240,7 +243,7 @@ javascript
   queueLength: 2,
   createdAt: Date
 }
-🔌 API Endpoints
+##🔌 API Endpoints
 Patient Management
 Method	Endpoint	Description
 POST	/api/patient	Add new patient
@@ -267,92 +270,22 @@ WebSocket
 Endpoint	Description
 /ws	WebSocket endpoint
 /topic/queue	Queue updates
-🚀 Installation & Setup
-Prerequisites
-Java 21 or higher
 
-Node.js 16+ and npm
+###URL: https://smart-clinic-queue-git-main-shriadhithyat-5905s-projects.vercel.app/
+###Username: receptionist
+###Password: clinic123
 
-MongoDB Atlas account
-
-Git
-
-Step 1: Clone the Repository
-bash
-git clone https://github.com/your-username/smartclinic-queue.git
-cd smartclinic-queue
-Step 2: MongoDB Atlas Setup
-Create a free cluster at MongoDB Atlas
-
-Create a database user
-
-Whitelist IP addresses (0.0.0.0/0 for testing)
-
-Get your connection string:
-
-text
-mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/smartclinic_queue?retryWrites=true&w=majority
-Step 3: Backend Deployment (Railway)
-Go to Railway
-
-Click "New Project" → "Deploy from GitHub"
-
-Select your repository
-
-Add environment variables:
-
-Variable	Value
-MONGODB_URI	Your MongoDB Atlas connection string
-PORT	8080
-Deploy and get your URL: https://your-app.up.railway.app
-
-Step 4: Frontend Deployment (Vercel)
-Go to Vercel
-
-Click "Add New" → "Project"
-
-Select your repository
-
-Add environment variables:
-
-Variable	Value
-REACT_APP_API_URL	https://your-app.up.railway.app
-REACT_APP_WS_URL	wss://your-app.up.railway.app/ws
-REACT_APP_BASE_URL	https://your-vercel-app.vercel.app
-Deploy
-
-Step 5: Local Development
-Start MongoDB:
-
-bash
-cd "C:\Program Files\MongoDB\Server\8.3\bin"
-mongod.exe --dbpath "C:\data\db"
-Start Backend:
-
-bash
-cd backend
-mvn spring-boot:run
-Start Frontend:
-
-bash
-cd frontend
-npm start
-🎮 How to Use
-Login
-text
-URL: http://localhost:3000
-Username: receptionist
-Password: clinic123
-Receptionist Dashboard
+---
+##Receptionist Dashboard
 Add patients with name, phone, disease, and symptoms
 
-Emergency symptoms auto-detect and prompt for priority
+##Emergency symptoms auto-detect and prompt for priority
 
-Queue management with Call Next, Skip, Complete, Delete
+##Queue management with Call Next, Skip, Complete, Delete
 
-Analytics dashboard
+##Analytics dashboard
 
-TV Display
+##TV Display
 Shows currently consulting patient with ETA
 
 Shows upcoming tokens with estimated times
@@ -361,7 +294,7 @@ QR code for self-registration
 
 Fullscreen mode
 
-Self-Registration
+##Self-Registration
 Scan QR code on TV display
 
 Fill in patient details
@@ -369,19 +302,8 @@ Fill in patient details
 Get token and estimated wait time
 
 Track queue in real-time
-
-🚨 Emergency Priority System
-The system automatically detects emergency symptoms:
-
-Emergency Symptoms	Action
-Chest Pain	🚨 Priority Queue
-Breathing Difficulty	🚨 Priority Queue
-Heavy Bleeding	🚨 Priority Queue
-Stroke Symptoms	🚨 Priority Queue
-Severe Burns	🚨 Priority Queue
-Seizures	🚨 Priority Queue
-High Fever	🚨 Priority Queue
-Flow:
+---
+###Flow:
 
 Receptionist enters symptoms
 
