@@ -16,7 +16,7 @@ const TVDisplay = () => {
 
   // Get base URL from environment
   const baseUrl = process.env.REACT_APP_BASE_URL || window.location.origin;
-  const qrValue = `${baseUrl}/self-register`;
+  const qrValue = "https://smart-clinic-queue-sigma.vercel.app/self-register";
 
   const fetchQueueData = async () => {
     try {

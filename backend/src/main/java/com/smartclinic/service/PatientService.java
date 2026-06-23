@@ -92,6 +92,18 @@ public class PatientService {
     @Transactional
     public PatientResponse addPatient(PatientRequest request) {
         logInfo("Adding new patient: " + request.getName());
+        // DEBUG: Print symptoms
+    System.out.println("🔍 Received symptoms: " + request.getSymptoms());
+    
+    // Check for emergency
+    String symptoms = request.getSymptoms();
+    boolean isEmergency = isEmergencyCase(symptoms);
+    
+    // DEBUG: Print emergency result
+    System.out.println("🚨 Emergency detected: " + isEmergency);
+    
+    boolean priorityApproved = request.getPriorityApproved() != null && request.getPriorityApproved();
+    System.out.println("✅ Priority approved: " + priorityApproved);
 
         String token = generateNextToken();
         Patient patient = new Patient();
