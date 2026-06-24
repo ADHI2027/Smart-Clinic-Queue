@@ -63,78 +63,68 @@ const PatientForm = ({ onPatientAdded, onSearchPatient }) => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log('📤 Sending patient data:', patientData);
-    if (!validateForm()) {
-      toast.error('Please fix the errors in the form');
-      return;
-    }
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  if (!validateForm()) {
+    toast.error('Please fix the errors in the form');
+    return;
+  }
 
-    // Check for emergency symptoms
-    const symptoms = formData.symptoms?.toLowerCase() || '';
-    const isEmergency = emergencySymptoms.some(s => symptoms.includes(s));
+  // Check for emergency symptoms
+  const symptoms = formData.symptoms?.toLowerCase() || '';
+  const isEmergency = emergencySymptoms.some(s => symptoms.includes(s));
 
-    let priorityApproved = false;
-    if (isEmergency) {
-      priorityApproved = window.confirm(
-        '🚨 Emergency symptoms detected!\n\n' +
-        'Patient: ' + formData.name + '\n' +
-        'Symptoms: ' + formData.symptoms + '\n\n' +
-        'Do you want to approve emergency priority?'
-      );
-      
-      if (priorityApproved) {
-        toast.success('🚨 Emergency priority approved!');
-      } else {
-        toast.info('Patient added to normal queue');
-      }
-    }
-
-    setSubmitting(true);
+  let priorityApproved = false;
+  if (isEmergency) {
+    priorityApproved = window.confirm(
+      '🚨 Emergency symptoms detected!\n\n' +
+      'Patient: ' + formData.name + '\n' +
+      'Symptoms: ' + formData.symptoms + '\n\n' +
+      'Do you want to approve emergency priority?'
+    );
     
-    try {
-      const patientData = {
-        name: formData.name,
-        phone: formData.phone,
-        disease: formData.disease,
-        symptoms: formData.symptoms || '',
-        isEmergency: isEmergency,
-        priorityApproved: priorityApproved,
-        emergencyReason: isEmergency ? formData.disease : null
-      };
-      
-      console.log('📤 Sending patient data:', patientData);
-      
-      const response = await patientApi.addPatient(patientData);
-      
-      console.log('✅ Patient added successfully:', response.data);
-      
-      toast.success(isEmergency && priorityApproved ? 
-        '🚨 Emergency patient added with priority!' : 
-        'Patient registered successfully!'
-      );
-      
-      handleClear();
-      if (onPatientAdded) {
-        onPatientAdded();
-      }
-    } catch (error) {
-      console.error('❌ Error adding patient:', error);
-      console.error('❌ Error response:', error.response?.data);
-      
-      if (error.response?.data?.errors) {
-        const errors = error.response.data.errors;
-        const errorMessages = Object.values(errors).join(', ');
-        toast.error('Validation error: ' + errorMessages);
-      } else {
-        toast.error(error.response?.data?.message || 'Failed to add patient. Please check the backend logs.');
-      }
-    } finally {
-      setSubmitting(false);
+    if (priorityApproved) {
+      toast.success('🚨 Emergency priority approved!');
+    } else {
+      toast.info('Patient added to normal queue');
     }
-  };
+  }
 
+  setSubmitting(true);
+  
+  try {
+    // DEFINE patientData HERE
+    const patientData = {
+      name: formData.name,
+      phone: formData.phone,
+      disease: formData.disease,
+      symptoms: formData.symptoms || '',
+      isEmergency: isEmergency,
+      priorityApproved: priorityApproved,
+      emergencyReason: isEmergency ? formData.disease : null
+    };
+    
+    console.log('📤 Sending patient data:', patientData);
+    
+    const response = await patientApi.addPatient(patientData);
+    
+    toast.success(isEmergency && priorityApproved ? 
+      '🚨 Emergency patient added with priority!' : 
+      'Patient registered successfully!'
+    );
+    
+    handleClear();
+    if (onPatientAdded) {
+      onPatientAdded();
+    }
+  } catch (error) {
+    console.error('❌ Error adding patient:', error);
+    toast.error(error.response?.data?.message || 'Failed to add patient');
+  } finally {
+    setSubmitting(false);
+  }
+};
   const handleClear = () => {
     setFormData({
       name: '',

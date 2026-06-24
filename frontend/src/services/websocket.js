@@ -15,7 +15,7 @@ class WebSocketService {
       return;
     }
 
-    const wsUrl = 'http://localhost:8080/ws';
+      const wsUrl = process.env.REACT_APP_WS_URL || 'http://localhost:8080/ws';
     
     this.client = new Client({
       webSocketFactory: () => new SockJS(wsUrl),
