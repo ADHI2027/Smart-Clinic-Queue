@@ -6,7 +6,7 @@ class WebSocketService {
     this.client = null;
     this.isConnected = false;
     this.reconnectAttempts = 0;
-    this.maxReconnectAttempts = 3;
+    this.maxReconnectAttempts = 10;
   }
 
   connect(onMessageReceived) {
@@ -15,14 +15,22 @@ class WebSocketService {
       return;
     }
 
-      const wsUrl = process.env.REACT_APP_WS_URL || 'http://localhost:8080/ws';
+    // SockJS expects http:// or https://, NOT wss://
+    const isProduction = process.env.NODE_ENV === 'production';
+    const wsUrl = isProduction 
+      ? 'https://smart-clinic-queue-production.up.railway.app/ws' 
+      : 'http://localhost:8080/ws';
+    
+    console.log('🔗 Connecting to WebSocket:', wsUrl);
     
     this.client = new Client({
       webSocketFactory: () => new SockJS(wsUrl),
       debug: (str) => {
-        console.log('[WebSocket]', str);
+        console.log('[WebSocket Debug]', str);
       },
       reconnectDelay: 5000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
       onConnect: () => {
         console.log('[WebSocket] ✅ Connected successfully!');
         this.isConnected = true;
@@ -46,18 +54,10 @@ class WebSocketService {
       onWebSocketClose: () => {
         console.log('[WebSocket] Connection closed');
         this.isConnected = false;
-        if (this.reconnectAttempts < this.maxReconnectAttempts) {
-          this.reconnectAttempts++;
-          console.log(`[WebSocket] Reconnecting (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`);
-          setTimeout(() => {
-            this.client.activate();
-          }, 5000);
-        } else {
-          console.log('[WebSocket] Max reconnect attempts reached');
-        }
+        this.handleReconnect();
       },
       onWebSocketError: (error) => {
-        console.error('[WebSocket] Error:', error);
+        console.error('[WebSocket] WebSocket error:', error);
         this.isConnected = false;
       }
     });
@@ -65,11 +65,25 @@ class WebSocketService {
     this.client.activate();
   }
 
+  handleReconnect() {
+    if (this.reconnectAttempts < this.maxReconnectAttempts) {
+      this.reconnectAttempts++;
+      console.log(`[WebSocket] Reconnect attempt ${this.reconnectAttempts} of ${this.maxReconnectAttempts}`);
+      setTimeout(() => {
+        if (!this.isConnected) {
+          this.client.activate();
+        }
+      }, 5000 * this.reconnectAttempts);
+    } else {
+      console.error('[WebSocket] Max reconnect attempts reached');
+    }
+  }
+
   disconnect() {
     if (this.client) {
       this.client.deactivate();
       this.isConnected = false;
-      console.log('[WebSocket] Disconnected');
+      console.log('[WebSocket] Disconnected manually');
     }
   }
 
