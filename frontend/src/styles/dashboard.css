@@ -132,33 +132,65 @@
   line-height: 1.1;
 }
 
-/* Call Next Button */
-.btn-call-next {
-  width: 100%;
+/* Spotlight Button (Call Next) */
+.btn-spotlight {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 16px;
-  background: #1068eb;
-  color: #ffffff;
-  border: none;
+  width: 100%;
+  background: rgba(20, 20, 20, 0.9);
+  border: 1px solid rgba(80, 255, 80, 0.25);
   border-radius: 14px;
+  color: #aaa;
   font-size: 1.02rem;
   font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  overflow: hidden;          /* IMPORTANT — hides glow edges */
+  transition: all 0.3s ease;
+  backdrop-filter: blur(6px);
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(16, 104, 235, 0.12);
   font-family: inherit;
+  box-shadow: 0 4px 12px rgba(80, 255, 80, 0.05);
 }
 
-.btn-call-next:hover:not(:disabled) {
-  background: #0c56c6;
+.btn-spotlight:hover:not(:disabled) {
+  color: #ffffff;
+  border-color: rgba(80, 255, 80, 0.5);
+  box-shadow: 0 6px 16px rgba(80, 255, 80, 0.15);
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(16, 104, 235, 0.2);
 }
 
-.btn-call-next:disabled {
+.btn-spotlight:disabled {
   background: #e2e8f0;
   color: #94a3b8;
+  border-color: transparent;
   cursor: not-allowed;
   box-shadow: none;
+  pointer-events: none;
+}
+
+.spotlight-beam {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .35s ease-out;
+
+  /* BIGGER beam for smooth spread */
+  background:
+    radial-gradient(
+      circle at var(--x, 50%) var(--y, 50%),
+      rgba(120, 255, 120, 0.25) 0%,
+      rgba(80, 255, 80, 0.10) 20%,
+      rgba(0, 0, 0, 0.0) 55%
+    );
+}
+
+.btn-spotlight:hover:not(:disabled) .spotlight-beam {
+  opacity: 1;
 }
 
 /* Consulting Banner */

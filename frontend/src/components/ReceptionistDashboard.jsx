@@ -56,6 +56,15 @@ const ReceptionistDashboard = () => {
   const [showAnalytics, setShowAnalytics] = useState(false);
   const navigate = useNavigate();
 
+  const handleMouseMove = (e) => {
+    const button = e.currentTarget;
+    const rect = button.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    button.style.setProperty('--x', `${x}px`);
+    button.style.setProperty('--y', `${y}px`);
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('username');
@@ -261,14 +270,18 @@ const ReceptionistDashboard = () => {
           )}
 
           <button 
-            className="btn-call-next"
+            className="btn-spotlight btn-call-next"
             onClick={handleCallNext}
             disabled={queueData.totalWaiting === 0}
+            onMouseMove={handleMouseMove}
           >
-            {queueData.totalWaiting === 0 ? 
-              'No patients waiting' : 
-              `Call Next (${queueData.totalWaiting} waiting)`
-            }
+            <div className="spotlight-beam"></div>
+            <span style={{ position: 'relative', pointerEvents: 'none' }}>
+              {queueData.totalWaiting === 0 ? 
+                'No patients waiting' : 
+                `Call Next (${queueData.totalWaiting} waiting)`
+              }
+            </span>
           </button>
 
           <QueueTable 
