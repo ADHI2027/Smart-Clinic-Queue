@@ -42,53 +42,80 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <div className="login-header">
-          <FaUserMd className="login-icon" />
-          <h1>Queue Solved</h1>
-          <p>Receptionist Login</p>
+    <div className="login-page-wrapper">
+      <div className="login-left-panel">
+        <div className="login-left-header">
+          <span className="logo-queue">Queue</span>
+          <span className="logo-cure">Cure</span>
         </div>
 
-        <form onSubmit={handleSubmit} className="login-form">
-          <div className="form-group">
-            <label htmlFor="username">
-              <FaUserMd className="input-icon" />
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter username"
-              disabled={loading}
-            />
+        <div className="login-box">
+          <h1 className="login-greeting">Hello.</h1>
+          <p className="login-greeting-desc">
+            Please enter your receptionist credentials to access the queue dashboard.
+          </p>
+
+          <form onSubmit={handleSubmit} className="login-form">
+            <div className="form-group">
+              <label htmlFor="username">Username</label>
+              <div style={{ position: 'relative' }}>
+                <FaUserMd className="input-icon-left" />
+                <input
+                  type="text"
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter username"
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <div style={{ position: 'relative' }}>
+                <FaLock className="input-icon-left" />
+                <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter password"
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            <button type="submit" className="btn-login" disabled={loading}>
+              <FaSignInAlt />
+              {loading ? 'Logging in...' : 'Login'}
+            </button>
+          </form>
+
+          <div className="login-footer">
+            <p>Demo credentials: receptionist / clinic123</p>
           </div>
+        </div>
 
-          <div className="form-group">
-            <label htmlFor="password">
-              <FaLock className="input-icon" />
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter password"
-              disabled={loading}
-            />
+        <div className="login-left-footer">
+          &copy; {new Date().getFullYear()} QueueCure. All rights reserved.
+        </div>
+      </div>
+
+      <div className="login-right-panel">
+        <div className="login-right-glass-card">
+          <div className="glass-card-logo">
+            <FaUserMd style={{ fontSize: '1.8rem', color: '#ffffff' }} />
+            <span style={{ fontSize: '1.4rem', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.5px' }}>
+              QueueCure
+            </span>
           </div>
-
-          <button type="submit" className="btn-login" disabled={loading}>
-            <FaSignInAlt />
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
-
-        <div className="login-footer">
-          <p>Demo credentials: receptionist / clinic123</p>
+          <h2 className="glass-card-title">
+            Precision clinic queueing is the new gold standard for patient satisfaction.
+          </h2>
+          <p className="glass-card-text">
+            Manage check-ins, track patient status, and streamline receptionist workflows with our responsive real-time dashboard.
+          </p>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import VoiceAnnouncement from './VoiceAnnouncement';
-import { FaSignOutAlt, FaTv } from 'react-icons/fa';
+import { FaSignOutAlt, FaTv, FaSearch, FaThLarge, FaChartLine } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import PatientForm from './PatientForm';
@@ -230,7 +230,7 @@ const ReceptionistDashboard = () => {
               <div className="stat-value">{queueData.totalWaiting}</div>
             </div>
             <div className="stat-card">
-              <div className="stat-label">Consulting</div>
+              <div className="stat-label">Currently Consulting</div>
               <div className="stat-value">
                 {queueData.currentlyConsulting ? 
                   queueData.currentlyConsulting.token : 'None'}

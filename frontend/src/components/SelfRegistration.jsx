@@ -51,39 +51,79 @@ const res = await axios.post(`${API_URL}/api/self-register`, formData);
   };
 
   if (registrationComplete && response) {
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString('en-GB').replace(/\//g, '-') + ', ' + 
+                          now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+
     return (
       <div className="self-registration-container">
-        <div className="confirmation-box">
-          <div className="success-icon">✅</div>
-          <h1>Registration Complete!</h1>
-          <div className="token-display">
-            <span className="token-label">Your Token</span>
-            <span className="token-number">{response.token}</span>
+        <div className="mobile-frame-wrapper">
+          <div className="mobile-notch"></div>
+          <div className="mobile-status-bar">
+            <span>9:41</span>
+            <div className="mobile-status-icons">📶 🛜 🔋</div>
           </div>
-          <div className="eta-display">
-            <div className="eta-item">
-              <span className="eta-label">Patients Ahead</span>
-              <span className="eta-value">{response.patientsAhead}</span>
+
+          <div className="ticket-screen-body">
+            
+            {/* FlexQ Logo Block */}
+            <div className="ticket-logo-block">
+              <div className="ticket-logo-text">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px' }}>
+                  <polygon points="12 2 22 7 22 17 12 22 2 17 2 7 12 2"/>
+                </svg>
+                FlexQ
+              </div>
+              <span className="ticket-subtitle">Smart Clinic Enterprise</span>
             </div>
-            <div className="eta-item">
-              <span className="eta-label">Expected Wait</span>
-              <span className="eta-value">{response.expectedWaitMin} - {response.expectedWaitMax} mins</span>
+
+            {/* Ticket Coupon Card */}
+            <div className="ticket-card">
+              <span className="ticket-item-label" style={{ textTransform: 'uppercase', fontSize: '0.74rem', letterSpacing: '0.8px' }}>Your Token</span>
+              <div className="ticket-token-number">{response.token}</div>
+              
+              <div className="ticket-divider"></div>
+
+              <div className="ticket-info-list">
+                <div className="ticket-info-item red">
+                  <span className="ticket-item-label">Patients Ahead</span>
+                  <span className="ticket-item-value">{response.patientsAhead}</span>
+                </div>
+                <div className="ticket-info-item blue">
+                  <span className="ticket-item-label">Expected Wait</span>
+                  <span className="ticket-item-value">
+                    {response.expectedWaitMin} - {response.expectedWaitMax} min
+                  </span>
+                </div>
+                <div className="ticket-info-item orange">
+                  <span className="ticket-item-label">Estimated Time</span>
+                  <span className="ticket-item-value">{response.estimatedTime}</span>
+                </div>
+              </div>
+
+              <div className="ticket-timestamp">
+                {formattedDate}
+              </div>
             </div>
-            <div className="eta-item">
-              <span className="eta-label">Estimated Time</span>
-              <span className="eta-value">{response.estimatedTime}</span>
+
+            {/* Actions group below card */}
+            <div className="ticket-actions-group">
+              <button className="ticket-primary-btn" onClick={handleTrackQueue}>
+                Track Queue
+              </button>
+              <button 
+                className="ticket-secondary-btn" 
+                onClick={() => {
+                  setRegistrationComplete(false);
+                  setFormData({ name: '', age: '', gender: 'Male', phone: '', symptoms: '', disease: '' });
+                  setResponse(null);
+                }}
+              >
+                Register Another Patient
+              </button>
             </div>
+
           </div>
-          <button className="track-queue-btn" onClick={handleTrackQueue}>
-            Track Queue
-          </button>
-          <button className="register-again-btn" onClick={() => {
-            setRegistrationComplete(false);
-            setFormData({ name: '', age: '', gender: 'Male', phone: '', symptoms: '', disease: '' });
-            setResponse(null);
-          }}>
-            Register Another Patient
-          </button>
         </div>
       </div>
     );
@@ -91,84 +131,92 @@ const res = await axios.post(`${API_URL}/api/self-register`, formData);
 
   return (
     <div className="self-registration-container">
-      <div className="self-registration-box">
-        <h1>📋 Self Registration</h1>
-        <p className="subtitle">Fill in the details below to book your appointment</p>
+      <div className="mobile-frame-wrapper">
+        <div className="mobile-notch"></div>
+        <div className="mobile-status-bar">
+          <span>9:41</span>
+          <div className="mobile-status-icons">📶 🛜 🔋</div>
+        </div>
 
-        <form onSubmit={handleSubmit} className="self-registration-form">
-          <div className="form-group">
-            <label>Patient Name *</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Enter full name"
-              required
-            />
-          </div>
+        <div className="self-registration-box">
+          <h1>📋 Self Registration</h1>
+          <p className="subtitle">Fill in the details below to book your appointment</p>
 
-          <div className="form-row">
+          <form onSubmit={handleSubmit} className="self-registration-form">
             <div className="form-group">
-              <label>Age</label>
+              <label>Patient Name *</label>
               <input
-                type="number"
-                name="age"
-                value={formData.age}
+                type="text"
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
-                placeholder="Age"
+                placeholder="Enter full name"
+                required
               />
             </div>
-            <div className="form-group">
-              <label>Gender</label>
-              <select name="gender" value={formData.gender} onChange={handleChange}>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Age</label>
+                <input
+                  type="number"
+                  name="age"
+                  value={formData.age}
+                  onChange={handleChange}
+                  placeholder="Age"
+                />
+              </div>
+              <div className="form-group">
+                <label>Gender</label>
+                <select name="gender" value={formData.gender} onChange={handleChange}>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
             </div>
-          </div>
 
-          <div className="form-group">
-            <label>Phone Number *</label>
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder="Enter 10-digit phone number"
-              maxLength="10"
-              required
-            />
-          </div>
+            <div className="form-group">
+              <label>Phone Number *</label>
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="Enter 10-digit phone number"
+                maxLength="10"
+                required
+              />
+            </div>
 
-          <div className="form-group">
-            <label>Symptoms</label>
-            <textarea
-              name="symptoms"
-              value={formData.symptoms}
-              onChange={handleChange}
-              placeholder="Describe your symptoms"
-              rows="3"
-            />
-          </div>
+            <div className="form-group">
+              <label>Symptoms</label>
+              <textarea
+                name="symptoms"
+                value={formData.symptoms}
+                onChange={handleChange}
+                placeholder="Describe your symptoms"
+                rows="3"
+              />
+            </div>
 
-          <div className="form-group">
-            <label>Disease / Consultation Reason *</label>
-            <input
-              type="text"
-              name="disease"
-              value={formData.disease}
-              onChange={handleChange}
-              placeholder="Enter disease or reason"
-              required
-            />
-          </div>
+            <div className="form-group">
+              <label>Disease / Consultation Reason *</label>
+              <input
+                type="text"
+                name="disease"
+                value={formData.disease}
+                onChange={handleChange}
+                placeholder="Enter disease or reason"
+                required
+              />
+            </div>
 
-          <button type="submit" className="book-appointment-btn" disabled={loading}>
-            {loading ? 'Booking...' : 'Book Appointment'}
-          </button>
-        </form>
+            <button type="submit" className="book-appointment-btn" disabled={loading}>
+              {loading ? 'Booking...' : 'Book Appointment'}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

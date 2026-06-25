@@ -12,7 +12,7 @@ public class HealthController {
     public Map<String, Object> health() {
         Map<String, Object> response = new HashMap<>();
         response.put("status", "UP");
-        response.put("message", "QUEUE SOLVED Backend is running!");
+        response.put("message", "QUEUE CURE Backend is running!");
         response.put("timestamp", System.currentTimeMillis());
         return response;
     }
@@ -21,7 +21,7 @@ public class HealthController {
     public Map<String, Object> home() {
         Map<String, Object> response = new HashMap<>();
         response.put("status", "OK");
-        response.put("message", "Welcome to QUEUE SOLVED API");
+        response.put("message", "Welcome to QUEUE CURE API");
         response.put("endpoints", new String[]{
             "/health",
             "/api/patient/queue",

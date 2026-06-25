@@ -1,8 +1,8 @@
-# 🏥 QUEUE SOLVED - Clinic Queue Management System
+# 🏥 QUEUE CURE - Clinic Queue Management System
 
 A production-ready clinic queue management system with real-time updates, dynamic ETA predictions, emergency priority, and self-registration via QR code.
 
-![QUEUE SOLVED](https://img.shields.io/badge/version-1.0.0-blue)
+![QUEUE CURE](https://img.shields.io/badge/version-1.0.0-blue)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.1.5-green)
 ![React](https://img.shields.io/badge/React-18-blue)
 ![MongoDB](https://img.shields.io/badge/MongoDB-6.0-green)
@@ -13,7 +13,7 @@ A production-ready clinic queue management system with real-time updates, dynami
 
 ## 📋 Overview
 
-**QUEUE SOLVED** is a modern clinic queue management system that eliminates paper tokens and provides real-time queue visibility. It features a **Receptionist Dashboard**, **Waiting Room TV Display**, **QR-based Self-Registration**, and **Emergency Priority Queue**.
+**QUEUE CURE** is a modern clinic queue management system that eliminates paper tokens and provides real-time queue visibility. It features a **Receptionist Dashboard**, **Waiting Room TV Display**, **QR-based Self-Registration**, and **Emergency Priority Queue**.
 
 ### 🎯 Key Features
 

@@ -52,13 +52,18 @@ const VoiceAnnouncement = () => {
 
   return (
     <div className="voice-control">
-      <button className="voice-toggle" onClick={toggleAnnouncements}>
-        {isEnabled ? (
-          <><FaVolumeUp /> Announcements ON</>
-        ) : (
-          <><FaVolumeMute /> Announcements OFF</>
-        )}
-      </button>
+      <div className="button-wrap">
+        <button className="glass-button" onClick={toggleAnnouncements}>
+          <span className="button-text">
+            {isEnabled ? (
+              <><FaVolumeUp /> Announcements ON</>
+            ) : (
+              <><FaVolumeMute /> Announcements OFF</>
+            )}
+          </span>
+          <div className="button-shine"></div>
+        </button>
+      </div>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 .tv-display {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: #ffffff;
   padding: 20px;
   position: relative;
   overflow: hidden;
@@ -21,25 +21,139 @@
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
 }
-.fullscreen-toggle {
+@property --angle-1 {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: -75deg;
+}
+
+@property --angle-2 {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: -45deg;
+}
+
+.fullscreen-btn-wrap {
   position: fixed;
   top: 20px;
   right: 20px;
-  padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 600;
   z-index: 100;
-  transition: all 0.3s ease;
+  pointer-events: auto;
+  transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.fullscreen-toggle:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: scale(1.05);
+.fullscreen-btn-wrap .glass-button {
+  all: unset;
+  cursor: pointer;
+  position: relative;
+  border-radius: 999px;
+  pointer-events: auto;
+  z-index: 30;
+  outline: none;
+  background: linear-gradient(-75deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.02));
+  box-shadow:
+    inset 0 0.125em 0.125em rgba(0, 0, 0, 0.03),
+    inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.8),
+    0 0.25em 0.125em -0.125em rgba(0, 0, 0, 0.05),
+    0 0 0.1em 0.25em rgba(0, 0, 0, 0.02) inset,
+    0 0 0 1px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fullscreen-btn-wrap .glass-button:hover {
+  transform: scale(0.975);
+  backdrop-filter: blur(5px);
+  box-shadow:
+    inset 0 0.125em 0.125em rgba(0, 0, 0, 0.03),
+    inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.8),
+    0 0.15em 0.05em -0.1em rgba(0, 0, 0, 0.08),
+    0 0 0.05em 0.1em rgba(0, 0, 0, 0.02) inset,
+    0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
+.fullscreen-btn-wrap .glass-button:active {
+  transform: scale(0.95) rotate3d(1, 0, 0, 20deg);
+  box-shadow:
+    inset 0 0.125em 0.125em rgba(0, 0, 0, 0.03),
+    inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.8),
+    0 0.125em 0.125em -0.125em rgba(0, 0, 0, 0.05),
+    0 0 0.1em 0.25em rgba(0, 0, 0, 0.02) inset,
+    0 0.225em 0.05em 0 rgba(0, 0, 0, 0.02),
+    0 0.25em 0 0 rgba(255, 255, 255, 0.5),
+    inset 0 0.25em 0.05em 0 rgba(0, 0, 0, 0.05);
+}
+
+.fullscreen-btn-wrap .button-text {
+  position: relative;
+  display: block;
+  user-select: none;
+  font-weight: 600;
+  font-size: 15px;
+  color: #1a1d1f;
+  letter-spacing: -0.025em;
+  padding: 12px 26px;
+  text-shadow: 0em 0.25em 0.05em rgba(0, 0, 0, 0.02);
+  transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.fullscreen-btn-wrap .glass-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  top: -1px;
+  left: -1px;
+  padding: 1px;
+  box-sizing: border-box;
+  background:
+    conic-gradient(from var(--angle-1) at 50% 50%, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0) 5% 40%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0) 60% 95%, rgba(0, 0, 0, 0.1)),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.02));
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1), --angle-1 500ms ease;
+  box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.3);
+}
+
+.fullscreen-btn-wrap .glass-button:hover::after {
+  --angle-1: -125deg;
+}
+
+.fullscreen-btn-wrap .glass-button:active::after {
+  --angle-1: -75deg;
+}
+
+.fullscreen-btn-wrap .button-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  width: calc(100% - 1px);
+  height: calc(100% - 1px);
+  top: 0.5px;
+  left: 0.5px;
+  background: linear-gradient(var(--angle-2), rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 40% 50%, rgba(255, 255, 255, 0) 55%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  background-size: 200% 200%;
+  background-position: 0% 50%;
+  background-repeat: no-repeat;
+  transition: background-position 500ms cubic-bezier(0.25, 1, 0.5, 1), --angle-2 500ms cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.fullscreen-btn-wrap .glass-button:hover .button-shine {
+  background-position: 25% 50%;
+}
+
+.fullscreen-btn-wrap .glass-button:active .button-shine {
+  background-position: 50% 15%;
+  --angle-2: -15deg;
 }
 
 .tv-content {
@@ -55,24 +169,40 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 0;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid #f1f5f9;
   margin-bottom: 30px;
 }
 
 .tv-header h1 {
   font-size: 2.5rem;
-  color: white;
+  color: #1a1d1f;
   font-weight: 700;
   letter-spacing: 1px;
 }
 
 .tv-clock {
   font-size: 2rem;
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: 300;
-  background: rgba(255, 255, 255, 0.1);
+  color: #1a1d1f;
+  font-weight: 400;
+  background: #f4f6fc;
+  border: 1px solid #e2e8f0;
   padding: 10px 25px;
   border-radius: 12px;
+}
+
+.qr-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.qr-label {
+  font-size: 0.9rem;
+  color: #1a1d1f;
+  font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  text-align: center;
 }
 
 .tv-main {
@@ -86,32 +216,31 @@
 .tv-footer {
   margin-top: auto;
   padding: 30px 0 20px;
-  border-top: 2px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid #f1f5f9;
   text-align: center;
 }
 
 .footer-message {
   font-size: 2rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: #1a1d1f;
   font-weight: 500;
   margin-bottom: 10px;
 }
 
 .footer-info {
   font-size: 1.2rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: #94a3b8;
 }
 
-/* Current Patient Card */
 .current-patient-card {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px);
+  background: #ffffff;
   border-radius: 24px;
   padding: 40px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid #e9edf5;
   min-height: 400px;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
 }
 
 .current-patient-card.empty {
@@ -121,7 +250,7 @@
 
 .empty-state {
   text-align: center;
-  color: rgba(255, 255, 255, 0.6);
+  color: #6f767e;
 }
 
 .empty-icon {
@@ -133,7 +262,7 @@
 .empty-state h2 {
   font-size: 2rem;
   margin-bottom: 10px;
-  color: rgba(255, 255, 255, 0.8);
+  color: #1a1d1f;
 }
 
 .empty-state p {
@@ -144,14 +273,14 @@
   display: flex;
   align-items: center;
   gap: 15px;
-  color: rgba(255, 255, 255, 0.8);
+  color: #6f767e;
   font-size: 1.2rem;
   margin-bottom: 20px;
 }
 
 .header-icon {
   font-size: 1.8rem;
-  color: #4ecdc4;
+  color: #22c55e;
 }
 
 .header-label {
@@ -163,9 +292,8 @@
 .patient-token {
   font-size: 6rem;
   font-weight: 700;
-  color: white;
+  color: #1a1d1f;
   margin: 20px 0;
-  text-shadow: 0 4px 20px rgba(78, 205, 196, 0.3);
 }
 
 .patient-info {
@@ -176,7 +304,7 @@
 }
 
 .info-item {
-  background: rgba(255, 255, 255, 0.05);
+  background: #f4f6fc;
   padding: 15px;
   border-radius: 12px;
 }
@@ -184,7 +312,7 @@
 .info-label {
   display: block;
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: #94a3b8;
   font-weight: 500;
   margin-bottom: 5px;
   text-transform: uppercase;
@@ -193,7 +321,7 @@
 
 .info-value {
   font-size: 1.5rem;
-  color: white;
+  color: #1a1d1f;
   font-weight: 600;
 }
 
@@ -209,14 +337,14 @@
 }
 
 .status-indicator.consulting {
-  background: rgba(78, 205, 196, 0.15);
-  color: #4ecdc4;
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
 }
 
 .pulse-dot {
   width: 12px;
   height: 12px;
-  background: #4ecdc4;
+  background: #22c55e;
   border-radius: 50%;
   animation: pulse 1.5s ease-in-out infinite;
 }
@@ -238,14 +366,14 @@
 
 /* Upcoming Tokens */
 .upcoming-tokens {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px);
+  background: #ffffff;
   border-radius: 24px;
   padding: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid #e9edf5;
   display: flex;
   flex-direction: column;
   min-height: 400px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
 }
 
 .upcoming-header {
@@ -254,7 +382,7 @@
   align-items: center;
   margin-bottom: 25px;
   padding-bottom: 15px;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .header-left {
@@ -264,18 +392,18 @@
 }
 
 .header-left h2 {
-  color: white;
+  color: #1a1d1f;
   font-size: 1.8rem;
 }
 
 .header-icon {
-  color: #4ecdc4;
+  color: #22c55e;
   font-size: 1.8rem;
 }
 
 .total-count {
-  background: rgba(78, 205, 196, 0.2);
-  color: #4ecdc4;
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
   padding: 8px 16px;
   border-radius: 20px;
   font-weight: 600;
@@ -292,12 +420,12 @@
 }
 
 .tokens-list::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: #f8fafc;
   border-radius: 10px;
 }
 
 .tokens-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: #cbd5e1;
   border-radius: 10px;
 }
 
@@ -307,13 +435,13 @@
   gap: 20px;
   padding: 15px 20px;
   margin-bottom: 10px;
-  background: rgba(255, 255, 255, 0.05);
+  background: #f8fafc;
   border-radius: 12px;
   transition: all 0.3s ease;
 }
 
 .token-item:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: #f1f5f9;
   transform: translateX(5px);
 }
 
@@ -323,8 +451,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(78, 205, 196, 0.2);
-  color: #4ecdc4;
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
   border-radius: 50%;
   font-weight: 700;
   font-size: 0.9rem;
@@ -333,18 +461,18 @@
 .token-number {
   font-size: 1.8rem;
   font-weight: 700;
-  color: white;
+  color: #1a1d1f;
   min-width: 80px;
 }
 
 .token-name {
   flex: 1;
-  color: rgba(255, 255, 255, 0.9);
+  color: #1a1d1f;
   font-size: 1.2rem;
 }
 
 .token-time {
-  color: rgba(255, 255, 255, 0.7);
+  color: #6f767e;
   font-size: 1.2rem;
   display: flex;
   align-items: center;
@@ -358,10 +486,10 @@
 .more-indicator {
   text-align: center;
   padding: 15px;
-  color: rgba(255, 255, 255, 0.5);
+  color: #94a3b8;
   font-weight: 500;
   margin-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid #f1f5f9;
 }
 
 /* Responsive TV Display */
@@ -443,19 +571,19 @@
   }
   /* End Time Styling */
 .info-item.highlight {
-  background: rgba(78, 205, 196, 0.15);
-  border: 2px solid rgba(78, 205, 196, 0.3);
+  background: rgba(34, 197, 94, 0.15);
+  border: 2px solid rgba(34, 197, 94, 0.3);
   border-radius: 12px;
   padding: 15px;
 }
 
 .info-icon {
   margin-right: 6px;
-  color: #4ecdc4;
+  color: #22c55e;
 }
 
 .end-time {
-  color: #4ecdc4 !important;
+  color: #22c55e !important;
   font-size: 1.8rem !important;
   font-weight: 700 !important;
 }
@@ -465,12 +593,12 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: rgba(255, 255, 255, 0.8);
+  color: #1a1d1f;
   font-size: 0.9rem;
-  background: rgba(78, 205, 196, 0.1);
+  background: rgba(34, 197, 94, 0.1);
   padding: 4px 12px;
   border-radius: 20px;
-  border: 1px solid rgba(78, 205, 196, 0.2);
+  border: 1px solid rgba(34, 197, 94, 0.2);
   min-width: 100px;
 }
 
@@ -481,7 +609,7 @@
 
 .end-label {
   font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: #94a3b8;
   font-weight: 500;
   text-transform: uppercase;
 }
@@ -498,14 +626,14 @@
   gap: 15px;
   padding: 12px 16px;
   margin-bottom: 8px;
-  background: rgba(255, 255, 255, 0.05);
+  background: #f8fafc;
   border-radius: 12px;
   transition: all 0.3s ease;
   flex-wrap: wrap;
 }
 
 .token-item:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: #f1f5f9;
   transform: translateX(5px);
 }
 

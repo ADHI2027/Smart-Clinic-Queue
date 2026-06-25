@@ -223,18 +223,36 @@ const handleSubmit = async (e) => {
         <div className="form-actions">
           <button 
             type="submit" 
-            className="btn-add"
+            className="glow-button btn-add"
             disabled={submitting}
           >
-            <FaUserPlus /> {submitting ? 'Adding...' : 'Add Patient'}
+            <div className="glow-layer"></div>
+            <div className="glow-hover-layer"></div>
+            <div className="stroke-layer"></div>
+            <div className="stroke-hover-layer"></div>
+            <div className="fill-layer"></div>
+            <div className="content-layer">
+              <span className="button-text">
+                {submitting ? 'Adding...' : 'Add Patient'}
+              </span>
+              <FaUserPlus />
+            </div>
           </button>
           <button 
             type="button" 
-            className="btn-clear"
+            className="glow-button btn-clear"
             onClick={handleClear}
             disabled={submitting}
           >
-            <FaTimes /> Clear Form
+            <div className="glow-layer"></div>
+            <div className="glow-hover-layer"></div>
+            <div className="stroke-layer"></div>
+            <div className="stroke-hover-layer"></div>
+            <div className="fill-layer"></div>
+            <div className="content-layer">
+              <span className="button-text">Clear Form</span>
+              <FaTimes />
+            </div>
           </button>
         </div>
       </form>

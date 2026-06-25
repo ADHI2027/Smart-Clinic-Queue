@@ -64,19 +64,24 @@ const TVDisplay = () => {
 
   return (
     <div className="tv-display">
-      <button 
-        className="fullscreen-toggle"
-        onClick={toggleFullscreen}
-      >
-        {isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
-      </button>
+      <div className="button-wrap fullscreen-btn-wrap">
+        <button 
+          className="glass-button"
+          onClick={toggleFullscreen}
+        >
+          <span className="button-text">
+            {isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+          </span>
+          <div className="button-shine"></div>
+        </button>
+      </div>
 
       <div className="tv-content">
         <header className="tv-header">
-          <h1>QUEUE SOLVED</h1>
+          <h1>QUEUE CURE</h1>
           <div className="qr-section">
             <QRCode value={qrValue} size={120} />
-            <p className="qr-label">📱 Scan to Self Register</p>
+            <p className="qr-label">Scan to Self Register</p>
           </div>
           <div className="tv-clock">
             {new Date().toLocaleTimeString('en-US', { 
