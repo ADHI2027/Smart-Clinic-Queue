@@ -14,6 +14,7 @@ import com.smartclinic.dto.PatientResponse;
 import com.smartclinic.dto.QueueResponse;
 import com.smartclinic.exception.PatientNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +33,7 @@ public class PatientService {
     private final ConsultationHistoryRepository historyRepository;
     private final DiseaseStatRepository diseaseStatRepository;
     private final DoctorStatRepository doctorStatRepository;
+    private final WhatsAppNotificationService whatsappNotificationService;
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("hh:mm a");
     private static final List<PatientStatus> ACTIVE_STATUSES = Arrays.asList(
@@ -451,9 +453,35 @@ public class PatientService {
             LocalDateTime etaTime = startTime.plusMinutes(duration);
             String estimatedTime = etaTime.format(TIME_FORMATTER);
             
+            String oldEstimatedTime = patient.getEstimatedTime();
+            
             patient.setEstimatedTime(estimatedTime);
+            patient.setEstimatedDateTime(etaTime);
             patient.setQueuePosition(i + 1);
+            
+            // If the ETA gets pushed out past 10 minutes from now, allow sending reminder again
+            if (patient.getSent10MinReminder() != null && patient.getSent10MinReminder() && etaTime.isAfter(LocalDateTime.now().plusMinutes(10))) {
+                patient.setSent10MinReminder(false);
+            }
+            
             patientRepository.save(patient);
+            
+            // Notify only if ETA has changed and old estimated time was set
+            if (oldEstimatedTime != null && !oldEstimatedTime.equals(estimatedTime)) {
+                if (patient.getPhone() != null && !patient.getPhone().trim().isEmpty()) {
+                    try {
+                        whatsappNotificationService.sendETAChangeNotification(
+                                patient.getPhone(),
+                                patient.getName(),
+                                patient.getToken(),
+                                oldEstimatedTime,
+                                estimatedTime
+                        );
+                    } catch (Exception e) {
+                        System.err.println("Failed to send ETA change notification: " + e.getMessage());
+                    }
+                }
+            }
             
             logDebug("Patient: " + patient.getToken() + 
                      ", Duration: " + duration + 
@@ -461,6 +489,40 @@ public class PatientService {
                      ", Position: " + (i + 1));
             
             startTime = etaTime;
+        }
+    }
+
+    @Scheduled(fixedRate = 60000) // Run every 60 seconds
+    @Transactional
+    public void checkAndSend10MinReminders() {
+        logDebug("Running scheduled 10-minute ETA reminder check");
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime reminderThreshold = now.plusMinutes(10);
+
+        List<Patient> waitingPatients = patientRepository.findByStatusOrderByCreatedAtAsc(PatientStatus.WAITING);
+        for (Patient patient : waitingPatients) {
+            if (patient.getEstimatedDateTime() != null) {
+                boolean isWithin10Mins = !patient.getEstimatedDateTime().isAfter(reminderThreshold);
+                boolean hasNotSentYet = patient.getSent10MinReminder() == null || !patient.getSent10MinReminder();
+                
+                if (isWithin10Mins && hasNotSentYet) {
+                    patient.setSent10MinReminder(true);
+                    patientRepository.save(patient);
+                    
+                    if (patient.getPhone() != null && !patient.getPhone().trim().isEmpty()) {
+                        try {
+                            whatsappNotificationService.send10MinReminder(
+                                    patient.getPhone(),
+                                    patient.getName(),
+                                    patient.getToken(),
+                                    patient.getEstimatedTime()
+                            );
+                        } catch (Exception e) {
+                            System.err.println("Failed to send 10-minute WhatsApp reminder: " + e.getMessage());
+                        }
+                    }
+                }
+            }
         }
     }
 

@@ -27,6 +27,10 @@ public class Patient {
     
     private String estimatedTime;
     
+    private LocalDateTime estimatedDateTime;
+    
+    private Boolean sent10MinReminder = false;
+    
     private LocalDateTime createdAt;
     
     private Integer queuePosition;
@@ -68,6 +72,12 @@ public class Patient {
 
     public String getEstimatedTime() { return estimatedTime; }
     public void setEstimatedTime(String estimatedTime) { this.estimatedTime = estimatedTime; }
+
+    public LocalDateTime getEstimatedDateTime() { return estimatedDateTime; }
+    public void setEstimatedDateTime(LocalDateTime estimatedDateTime) { this.estimatedDateTime = estimatedDateTime; }
+
+    public Boolean getSent10MinReminder() { return sent10MinReminder; }
+    public void setSent10MinReminder(Boolean sent10MinReminder) { this.sent10MinReminder = sent10MinReminder; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
