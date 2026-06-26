@@ -2,10 +2,12 @@ package com.smartclinic.service;
 
 import com.smartclinic.model.ConsultationHistory;
 import com.smartclinic.model.DiseaseStat;
+import com.smartclinic.model.DoctorStat;
 import com.smartclinic.model.Patient;
 import com.smartclinic.model.PatientStatus;
 import com.smartclinic.repository.ConsultationHistoryRepository;
 import com.smartclinic.repository.DiseaseStatRepository;
+import com.smartclinic.repository.DoctorStatRepository;
 import com.smartclinic.repository.PatientRepository;
 import com.smartclinic.dto.PatientRequest;
 import com.smartclinic.dto.PatientResponse;
@@ -29,6 +31,7 @@ public class PatientService {
     private final QueueWebSocketService queueWebSocketService;
     private final ConsultationHistoryRepository historyRepository;
     private final DiseaseStatRepository diseaseStatRepository;
+    private final DoctorStatRepository doctorStatRepository;
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("hh:mm a");
     private static final List<PatientStatus> ACTIVE_STATUSES = Arrays.asList(
@@ -280,6 +283,8 @@ public class PatientService {
         Patient savedPatient = patientRepository.save(patient);
 
         recordConsultationHistory(savedPatient);
+        updateDiseaseStatistics(savedPatient.getDisease());
+        updateDoctorStatistics(savedPatient.getDoctor());
 
         try {
             long waitingCount = patientRepository.countByStatus(PatientStatus.WAITING);
@@ -294,6 +299,94 @@ public class PatientService {
 
         broadcastQueueUpdate();
         return convertToResponse(savedPatient);
+    }
+
+    private void updateDiseaseStatistics(String disease) {
+        if (disease == null || disease.isEmpty()) return;
+        try {
+            List<ConsultationHistory> historyList = historyRepository.findByDisease(disease);
+            if (historyList.isEmpty()) return;
+
+            double avg = historyList.stream()
+                    .filter(h -> h.getActualDuration() != null)
+                    .mapToInt(ConsultationHistory::getActualDuration)
+                    .average()
+                    .orElse(DEFAULT_DURATION);
+
+            int min = historyList.stream()
+                    .filter(h -> h.getActualDuration() != null)
+                    .mapToInt(ConsultationHistory::getActualDuration)
+                    .min()
+                    .orElse(DEFAULT_DURATION);
+
+            int max = historyList.stream()
+                    .filter(h -> h.getActualDuration() != null)
+                    .mapToInt(ConsultationHistory::getActualDuration)
+                    .max()
+                    .orElse(DEFAULT_DURATION);
+
+            int total = historyList.size();
+
+            DiseaseStat stat = diseaseStatRepository.findByDisease(disease)
+                    .orElse(new DiseaseStat());
+
+            stat.setDisease(disease);
+            stat.setAverageDuration(avg);
+            stat.setMinDuration(min);
+            stat.setMaxDuration(max);
+            stat.setTotalPatients(total);
+            stat.setLastUpdated(LocalDateTime.now());
+
+            diseaseStatRepository.save(stat);
+            logInfo("Updated DiseaseStat for '" + disease + "': avg=" + avg + ", total=" + total);
+        } catch (Exception e) {
+            System.err.println("Failed to update disease statistics: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void updateDoctorStatistics(String doctor) {
+        if (doctor == null || doctor.isEmpty()) return;
+        try {
+            List<ConsultationHistory> historyList = historyRepository.findByDoctor(doctor);
+            if (historyList.isEmpty()) return;
+
+            double avg = historyList.stream()
+                    .filter(h -> h.getActualDuration() != null)
+                    .mapToInt(ConsultationHistory::getActualDuration)
+                    .average()
+                    .orElse(DEFAULT_DURATION);
+
+            int min = historyList.stream()
+                    .filter(h -> h.getActualDuration() != null)
+                    .mapToInt(ConsultationHistory::getActualDuration)
+                    .min()
+                    .orElse(DEFAULT_DURATION);
+
+            int max = historyList.stream()
+                    .filter(h -> h.getActualDuration() != null)
+                    .mapToInt(ConsultationHistory::getActualDuration)
+                    .max()
+                    .orElse(DEFAULT_DURATION);
+
+            int total = historyList.size();
+
+            DoctorStat stat = doctorStatRepository.findByDoctor(doctor)
+                    .orElse(new DoctorStat());
+
+            stat.setDoctor(doctor);
+            stat.setAverageDuration(avg);
+            stat.setMinDuration(min);
+            stat.setMaxDuration(max);
+            stat.setTotalPatients(total);
+            stat.setLastUpdated(LocalDateTime.now());
+
+            doctorStatRepository.save(stat);
+            logInfo("Updated DoctorStat for '" + doctor + "': avg=" + avg + ", total=" + total);
+        } catch (Exception e) {
+            System.err.println("Failed to update doctor statistics: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Transactional
